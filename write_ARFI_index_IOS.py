@@ -36,7 +36,7 @@ for r in reader:
     arfi_path = '%s/Patient%s' % (invivo_root, r[0])
 
     try:
-        f = open('%s/ARFI_Index_Lesion_IOS.txt' % arfi_path, 'w')
+        f = open('%s/ARFI_Index_Lesion_IOS.txt' % arfi_path, 'a')
         if len(lesion_indices) == 0:
             f.write('None')
         else:
