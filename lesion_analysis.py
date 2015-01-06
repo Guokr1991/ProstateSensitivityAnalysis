@@ -16,11 +16,36 @@ class LesionAnalysis(object):
             arfiios = f.read()
 
         arfi = {}
-        for lesion in arfiios.split('/n'):
+        for lesion in arfiios.split('\\n'):
             # need to strip off leading space and \n on IOS score
-            arfi[lesion.split(',')[0]] = lesion.split(',')[1][1:2]
+            arfi[lesion.split(',')[0]] = lesion.split(', ')[1][:-1]
 
         return arfi
+
+    def read_histology(self):
+        """
+        head histology pca, atrophy and bph lesions
+        """
+        with open(self.hist_lesions, 'r') as f:
+            histread = f.readlines()
+
+        print histread
+        histo = {}
+        for lesion in histread:
+            lesion = lesion[:-1]
+            # make sure we hav)e a properly-formatted histology file
+            if not any([x in lesion for x in ['pca', 'bph', 'atrophy']]):
+                print "WARNING: Malformed histology lesion file."
+            # there can be multiple pca lesions
+            if 'pca' in lesion:
+                if 'pca' not in histo:
+                    histo['pca'] = [lesion.split(', ')[1:]]
+                else:
+                    histo['pca'].append(lesion.split(', ')[1:])
+            else:
+                histo[lesion.split(',')[0]] = lesion.split(', ')[1:]
+
+        return histo
 
     def nearest_neighbor(self):
         """
