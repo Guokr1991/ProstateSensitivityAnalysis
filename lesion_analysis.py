@@ -4,7 +4,7 @@ class LesionAnalysis(object):
     """
 
     def __init__(self, pnum):
-        self.root = '/luscinia/ProstateStudy/invivo/Patient%s/' % pnum
+        self.root = '/luscinia/ProstateStudy/invivo/Patient%s' % pnum
         self.arfi_ios = '%s/ARFI_Index_Lesion_IOS.txt' % self.root
         self.hist_lesions = '%s/Histology/HistologyLesions.txt' % self.root
 
@@ -17,7 +17,8 @@ class LesionAnalysis(object):
 
         arfi = {}
         for lesion in arfiios.split('/n'):
-            arfi[lesion.split(',')[0]] = lesion.split(',')[1]
+            # need to strip off leading space and \n on IOS score
+            arfi[lesion.split(',')[0]] = lesion.split(',')[1][1:2]
 
         return arfi
 
