@@ -1,4 +1,4 @@
-class LesionAnalysis(object):
+class LesionAnalysis:
     """
     class for the prostate lesion analysis b/w ARFI, MRI and histology
     """
@@ -29,7 +29,6 @@ class LesionAnalysis(object):
         with open(self.hist_lesions, 'r') as f:
             histread = f.readlines()
 
-        print histread
         histo = {}
         for lesion in histread:
             lesion = lesion[:-1]
