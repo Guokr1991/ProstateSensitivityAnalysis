@@ -15,12 +15,10 @@ class LesionAnalysis:
         with open(self.arfi_ios, 'r') as f:
             arfiios = f.readlines()
 
-        arfi = {}
+        self.arfi = {}
         for lesion in arfiios:
             lesion = lesion[:-1]
-            arfi[lesion.split(', ')[0]] = lesion.split(', ')[1]
-
-        return arfi
+            self.arfi[lesion.split(', ')[0]] = lesion.split(', ')[1]
 
     def read_histology(self):
         """
@@ -29,7 +27,7 @@ class LesionAnalysis:
         with open(self.hist_lesions, 'r') as f:
             histread = f.readlines()
 
-        histo = {}
+        self.histology = {}
         for lesion in histread:
             lesion = lesion[:-1]
             # make sure we hav)e a properly-formatted histology file
@@ -37,14 +35,12 @@ class LesionAnalysis:
                 print "WARNING: Malformed histology lesion file."
             # there can be multiple pca lesions
             if 'pca' in lesion:
-                if 'pca' not in histo:
-                    histo['pca'] = [lesion.split(', ')[1:]]
+                if 'pca' not in self.histology:
+                    self.histology['pca'] = [lesion.split(', ')[1:]]
                 else:
-                    histo['pca'].append(lesion.split(', ')[1:])
+                    self.histology['pca'].append(lesion.split(', ')[1:])
             else:
-                histo[lesion.split(',')[0]] = lesion.split(', ')[1:]
-
-        return histo
+                self.histology[lesion.split(',')[0]] = lesion.split(', ')[1:]
 
     def nearest_neighbor(self):
         """
