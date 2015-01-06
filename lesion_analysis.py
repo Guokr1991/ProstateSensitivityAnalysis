@@ -11,6 +11,8 @@ class LesionAnalysis:
         self.read_histology()
         self.check_index_exact_match()
         self.check_index_nn_match()
+        self.check_arfi_benign_match('atrophy')
+        self.check_arfi_benign_match('bph')
 
     def read_arfi(self):
         """
@@ -108,13 +110,20 @@ class LesionAnalysis:
         else:
             self.index_nn_match = False
 
-    def check_arfi_atrophy_match(self):
+    def check_arfi_benign_match(self, benign):
         """
-        check if atrophy is present in the exact or nearest neighbor region to
-        an ARFI lesion
+        check if atrophy or bph is present in the exact or nearest neighbor
+        region to an ARFI lesion
+
+        INPUT: benign expected to be either 'atrophy' or 'bph'
+
+        EXAMPLE check_arfi_benign_match(self, 'atrophy')
         """
-        self.atrophy = self.histology['atrophy'][1:]
-        if any([x in self.atrophy for x in self.arfi.keys()]):
-            self.arfi_atrophy_match = True
-        else:
-            self.arfi_atrophy_match = False
+        try:
+            benign_regions = self.histology[benign][1:]
+            if any([x in benign_regions for x in self.arfi.keys()]):
+                setattr(self, 'arfi_%s_match' % benign, True)
+            else:
+                setattr(self, 'arfi_%s_match' % benign, False)
+        except KeyError:
+            setattr(self, 'arfi_%s_match' % benign, False)
