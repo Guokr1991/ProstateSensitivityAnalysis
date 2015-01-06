@@ -7,6 +7,10 @@ class LesionAnalysis:
         self.root = '/luscinia/ProstateStudy/invivo/Patient%s' % pnum
         self.arfi_ios = '%s/ARFI_Index_Lesion_IOS.txt' % self.root
         self.hist_lesions = '%s/Histology/HistologyLesions.txt' % self.root
+        self.read_arfi()
+        self.read_histology()
+        self.check_index_exact_match()
+        self.check_index_nn_match()
 
     def read_arfi(self):
         """
@@ -79,22 +83,27 @@ class LesionAnalysis:
 
         return nearest_neighbors
 
-    def check_exact_match(image, histo):
+    def check_index_exact_match(self):
         """
-        check for an exact region match between imaging and histology
+        check for an exact match b/w ARFI and histology index lesions
         """
-        if image == histo:
-            return True
-        else:
-            return False
+        arfi_index = self.arfi.keys()[0]
+        hist_index = self.histology['pca'][0][0]
 
-    def check_nn_match(self, image, histo):
-        """
-        check for a nearest-neighbor match between imaging and histology
-        """
-        histo_nn = self.nearest_neighbor(histo)
-
-        if image in histo_nn:
-            return True
+        if arfi_index == hist_index:
+            self.index_exact_match = True
         else:
-            return False
+            self.index_exact_match = False
+
+    def check_index_nn_match(self):
+        """
+        check for nearest-neightbor match b/w ARFI and histology index lesions
+        """
+        arfi_index = self.arfi.keys()[0]
+        hist_index = self.histology['pca'][0][0]
+        hist_index_nn = self.nearest_neighbor(hist_index)
+
+        if arfi_index in hist_index_nn:
+            self.index_nn_match = True
+        else:
+            self.index_nn_match = False
