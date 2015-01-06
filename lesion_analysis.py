@@ -99,11 +99,11 @@ class LesionAnalysis:
         """
         check for nearest-neightbor match b/w ARFI and histology index lesions
         """
-        arfi_index = self.arfi.keys()[0]
-        hist_index = self.histology['pca'][0][0]
-        hist_index_nn = self.nearest_neighbor(hist_index)
+        self.arfi_index = self.arfi.keys()[0]
+        self.hist_index = self.histology['pca'][0][0]
+        self.hist_index_nn = self.nearest_neighbor(self.hist_index)
 
-        if arfi_index in hist_index_nn:
+        if self.arfi_index in self.hist_index_nn:
             self.index_nn_match = True
         else:
             self.index_nn_match = False
