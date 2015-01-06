@@ -107,3 +107,14 @@ class LesionAnalysis:
             self.index_nn_match = True
         else:
             self.index_nn_match = False
+
+    def check_arfi_atrophy_match(self):
+        """
+        check if atrophy is present in the exact or nearest neighbor region to
+        an ARFI lesion
+        """
+        self.atrophy = self.histology['atrophy'][1:]
+        if any([x in self.atrophy for x in self.arfi.keys()]):
+            self.arfi_atrophy_match = True
+        else:
+            self.arfi_atrophy_match = False
