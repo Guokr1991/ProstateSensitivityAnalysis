@@ -1,6 +1,6 @@
 class LesionAnalysis:
     """
-    class for the prostate lesion analysis b/w ARFI, MRI and histology
+    class for the prostate lesion analysis b/w ARFI and histology
     """
 
     def __init__(self, pnum):
@@ -42,11 +42,11 @@ class LesionAnalysis:
             else:
                 self.histology[lesion.split(',')[0]] = lesion.split(', ')[1:]
 
-    def nearest_neighbor(self):
+    @staticmethod
+    def nearest_neighbor(region):
         """
         extract the set of nearest neighbor regions
         """
-
         nn27dict = dict(nn1p=set(['2p', '2a', '1a', '7p', '7a', '3p']),
                         nn2p=set(['1p', '1a', '2a', '4p']),
                         nn3p=set(['4p', '3a', '9p', '5p', '1p']),
@@ -75,6 +75,26 @@ class LesionAnalysis:
                         nn14as=set(['3a', '9a', '4a', '10a', '13as', '15a']),
                         nn15as=set(['6a', '12a', '5a', '11a', '14as']))
 
-        nearest_neighbors = nn27dict['nn%s' % self.region]
+        nearest_neighbors = nn27dict['nn%s' % region]
 
         return nearest_neighbors
+
+    def check_exact_match(image, histo):
+        """
+        check for an exact region match between imaging and histology
+        """
+        if image == histo:
+            return True
+        else:
+            return False
+
+    def check_nn_match(self, image, histo):
+        """
+        check for a nearest-neighbor match between imaging and histology
+        """
+        histo_nn = self.nearest_neighbor(histo)
+
+        if image in histo_nn:
+            return True
+        else:
+            return False
