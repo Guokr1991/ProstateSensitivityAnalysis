@@ -4,7 +4,8 @@ class LesionAnalysis:
     """
 
     def __init__(self, pnum):
-        self.root = '/luscinia/ProstateStudy/invivo/Patient%s' % pnum
+        self.pnum = pnum
+        self.root = '/luscinia/ProstateStudy/invivo/Patient%s' % self.pnum
         self.arfi_ios = '%s/ARFI_Index_Lesion_IOS.txt' % self.root
         self.hist_lesions = '%s/Histology/HistologyLesions.txt' % self.root
         self.read_arfi()
@@ -18,35 +19,46 @@ class LesionAnalysis:
         """
         read ARFI lesion IOS data
         """
-        with open(self.arfi_ios, 'r') as f:
-            arfiios = f.readlines()
-
         self.arfi = {}
-        for lesion in arfiios:
-            lesion = lesion[:-1]
-            self.arfi[lesion.split(', ')[0]] = lesion.split(', ')[1]
+        try:
+            with open(self.arfi_ios, 'r') as f:
+                arfiios = f.readlines()
+
+            if 'None' not in arfiios:
+                for lesion in arfiios:
+                    lesion = lesion[:-1]
+                    self.arfi[lesion.split(', ')[0]] = lesion.split(', ')[1]
+            else:
+                self.arfi[None] = None
+        except IOError:
+            print "%s does not exist" % self.arfi_ios
+            self.arfi[None] = None
 
     def read_histology(self):
         """
         head histology pca, atrophy and bph lesions
         """
-        with open(self.hist_lesions, 'r') as f:
-            histread = f.readlines()
-
         self.histology = {}
-        for lesion in histread:
-            lesion = lesion[:-1]
-            # make sure we hav)e a properly-formatted histology file
-            if not any([x in lesion for x in ['pca', 'bph', 'atrophy']]):
-                print "WARNING: Malformed histology lesion file."
-            # there can be multiple pca lesions
-            if 'pca' in lesion:
-                if 'pca' not in self.histology:
-                    self.histology['pca'] = [lesion.split(', ')[1:]]
+        try:
+            with open(self.hist_lesions, 'r') as f:
+                histread = f.readlines()
+
+            for lesion in histread:
+                lesion = lesion[:-1]
+                # make sure we hav)e a properly-formatted histology file
+                if not any([x in lesion for x in ['pca', 'bph', 'atrophy']]):
+                    print "WARNING: Malformed histology lesion file."
+                # there can be multiple pca lesions
+                if 'pca' in lesion:
+                    if 'pca' not in self.histology:
+                        self.histology['pca'] = [lesion.split(', ')[1:]]
+                    else:
+                        self.histology['pca'].append(lesion.split(', ')[1:])
                 else:
-                    self.histology['pca'].append(lesion.split(', ')[1:])
-            else:
-                self.histology[lesion.split(',')[0]] = lesion.split(', ')[1:]
+                    self.histology[lesion.split(', ')[0]] = lesion.split(', ')[1:]
+        except IOError:
+            print "%s does not exist" % self.hist_lesions
+            self.histology[None] = None
 
     @staticmethod
     def nearest_neighbor(region):
@@ -127,3 +139,16 @@ class LesionAnalysis:
                 setattr(self, 'arfi_%s_match' % benign, False)
         except KeyError:
             setattr(self, 'arfi_%s_match' % benign, False)
+
+    def print_analysis(self):
+        """
+        print analysis results to the terminal
+        """
+        print "================= PATIENT %s =================" % self.pnum
+        if None in self.arfi or None in self.histology:
+            print "Incomplete dataset; not included in analysis."
+        else:
+            print "Index lesion EXACT match:\t\t%s" % self.index_exact_match
+            print "Index lesion NEAREST NEIGHBOR match:\t%s" % self.index_nn_match
+            print "ARFI:Atrophy Match:\t\t\t%s" % self.arfi_atrophy_match
+            print "ARFI:BPH Match:\t\t\t\t%s" % self.arfi_atrophy_match
