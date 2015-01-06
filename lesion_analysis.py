@@ -13,12 +13,12 @@ class LesionAnalysis(object):
         read ARFI lesion IOS data
         """
         with open(self.arfi_ios, 'r') as f:
-            arfiios = f.read()
+            arfiios = f.readlines()
 
         arfi = {}
-        for lesion in arfiios.split('\\n'):
-            # need to strip off leading space and \n on IOS score
-            arfi[lesion.split(',')[0]] = lesion.split(', ')[1][:-1]
+        for lesion in arfiios:
+            lesion = lesion[:-1]
+            arfi[lesion.split(', ')[0]] = lesion.split(', ')[1]
 
         return arfi
 
