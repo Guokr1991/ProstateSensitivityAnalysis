@@ -10,6 +10,7 @@ class LesionAnalysis:
         self.hist_lesions = '%s/Histology/HistologyLesions.txt' % self.root
         self.read_arfi()
         self.read_histology()
+        self.valid_dataset()
         self.check_index_exact_match()
         self.check_index_nn_match()
         self.check_arfi_benign_match('atrophy')
@@ -29,9 +30,9 @@ class LesionAnalysis:
                     lesion = lesion[:-1]
                     self.arfi[lesion.split(', ')[0]] = lesion.split(', ')[1]
             else:
-                self.arfi[None] = None
+                self.arfi['read'] = 'no lesions read'
         except IOError:
-            print "%s does not exist" % self.arfi_ios
+            #print "%s does not exist" % self.arfi_ios
             self.arfi[None] = None
 
     def read_histology(self):
@@ -47,7 +48,7 @@ class LesionAnalysis:
                 lesion = lesion[:-1]
                 # make sure we hav)e a properly-formatted histology file
                 if not any([x in lesion for x in ['pca', 'bph', 'atrophy']]):
-                    print "WARNING: Malformed histology lesion file."
+                    print "WARNING: Malformed histology lesion file (P%s)." % self.pnum
                 # there can be multiple pca lesions
                 if 'pca' in lesion:
                     if 'pca' not in self.histology:
@@ -57,56 +58,75 @@ class LesionAnalysis:
                 else:
                     self.histology[lesion.split(', ')[0]] = lesion.split(', ')[1:]
         except IOError:
-            print "%s does not exist" % self.hist_lesions
+            #print "%s does not exist" % self.hist_lesions
             self.histology[None] = None
 
-    @staticmethod
-    def nearest_neighbor(region):
+    def nearest_neighbor(self, region):
         """
-        extract the set of nearest neighbor regions
+        extract the set of nearest neighbor regions; 27 regions based on INSERT
+        CITATION HERE
+
+        INPUT: region (string) - find nearest neighbors around this region
         """
-        nn27dict = dict(nn1p=set(['2p', '2a', '1a', '7p', '7a', '3p']),
-                        nn2p=set(['1p', '1a', '2a', '4p']),
-                        nn3p=set(['4p', '3a', '9p', '5p', '1p']),
-                        nn4p=set(['4a', '3p', '3a', '2p', '6p']),
-                        nn5p=set(['6p', '11p', '5a', '15as', '3p', '6p']),
-                        nn6p=set(['5p', '6a', '5a', '4p']),
-                        nn7p=set(['1p', '8p', '7a', '8a', '1a', '9p']),
-                        nn8p=set(['7p', '8a', '10p', '7a']),
-                        nn9p=set(['10p', '3p', '9a', '7a', '11p']),
-                        nn10p=set(['9p', '10a', '9a', '8p', '12p']),
-                        nn11p=set(['12p', '5p', '11a', '15as', '12a', '9p']),
-                        nn12p=set(['11p', '12a', '11a', '10p']),
-                        nn1a=set(['13as', '2a', '7a', '3a']),
-                        nn2a=set(['1a', '13as', '2p', '4a']),
-                        nn3a=set(['5a', '4p', '3p', '14as', '5a', '1p']),
-                        nn4a=set(['3a', '14as', '4p', '2a', '6a']),
-                        nn5a=set(['15as', '6a', '3a', '5p']),
-                        nn6a=set(['5a', '15as', '6p', '4a']),
-                        nn7a=set(['1a', '13as', '8a', '7p', '9a']),
-                        nn8a=set(['8p', '7a', '13as', '10a']),
-                        nn9a=set(['10a', '14as', '7a', '11a']),
-                        nn10a=set(['10p', '8a', '12a', '9a']),
-                        nn11a=set(['12a', '15as', '12p', '9a']),
-                        nn12a=set(['11a', '15as', '12p', '10a']),
-                        nn13as=set(['1a', '7a', '8a', '2a', '14as']),
-                        nn14as=set(['3a', '9a', '4a', '10a', '13as', '15a']),
-                        nn15as=set(['6a', '12a', '5a', '11a', '14as']))
 
-        nearest_neighbors = nn27dict['nn%s' % region]
+        prostate27roi = [[0 for AP in range(3)] for BA in range(3)]
+        prostate27roi[0][0] = ['13as' for LAT in range(4)]
+        prostate27roi[0][1] = ['2a', '1a', '7a', '8a']
+        prostate27roi[0][2] = ['2p', '1p', '7p', '8p']
+        prostate27roi[1][0] = ['14as' for LAT in range(4)]
+        prostate27roi[1][1] = ['4a', '3a', '9a', '10a']
+        prostate27roi[1][2] = ['4p', '3p', '9p', '10p']
+        prostate27roi[2][0] = ['15as' for LAT in range(4)]
+        prostate27roi[2][1] = ['6a', '5a', '11a', '12a']
+        prostate27roi[2][2] = ['6p', '5p', '11p', '12p']
 
-        return nearest_neighbors
+        # find region index
+        # TODO: replace with list comprehension
+        for i, a in enumerate(prostate27roi):
+            for j, b in enumerate(a):
+                for k, c in enumerate(b):
+                    if c == region:
+                        rindices = (i, j, k)
+
+        self.calc_nn_ranges(rindices)
+
+        nn = [[[prostate27roi[i][j][k] for i in self.valid_ranges[0]] for j in self.valid_ranges[1]] for k in self.valid_ranges[2]]
+
+        print nn
+        return nn
+
+    def calc_nn_ranges(self, rindices):
+        """
+        calculate index ranges for nearest neighbor region identification
+        """
+        self.valid_ranges = [range(x-1, x+2) for x in rindices]
+
+        for i in range(3):
+            if min(self.valid_ranges[i]) < 0:
+                self.valid_ranges[i] = self.valid_ranges[i][1:]
+            if i <= 1:
+                if max(self.valid_ranges[i]) > 2:
+                    self.valid_ranges[i] = self.valid_ranges[i][:-1]
+            else:
+                if max(self.valid_ranges[i]) > 3:
+                    self.valid_ranges[i] = self.valid_ranges[i][:-1]
+
+        # AS regions, span entire lateral extent
+        if rindices[1] == 0:
+            self.valid_ranges[2] = range(4)
 
     def check_index_exact_match(self):
         """
         check for an exact match b/w ARFI and histology index lesions
         """
         arfi_index = self.arfi.keys()[0]
-        hist_index = self.histology['pca'][0][0]
-
-        if arfi_index == hist_index:
-            self.index_exact_match = True
-        else:
+        try:
+            hist_index = self.histology['pca'][0][0]
+            if arfi_index == hist_index:
+                self.index_exact_match = True
+            else:
+                self.index_exact_match = False
+        except KeyError:
             self.index_exact_match = False
 
     def check_index_nn_match(self):
@@ -114,12 +134,15 @@ class LesionAnalysis:
         check for nearest-neightbor match b/w ARFI and histology index lesions
         """
         self.arfi_index = self.arfi.keys()[0]
-        self.hist_index = self.histology['pca'][0][0]
-        self.hist_index_nn = self.nearest_neighbor(self.hist_index)
+        try:
+            self.hist_index = self.histology['pca'][0][0]
+            self.hist_index_nn = self.nearest_neighbor(self.hist_index)
 
-        if self.arfi_index in self.hist_index_nn:
-            self.index_nn_match = True
-        else:
+            if self.arfi_index in self.hist_index_nn:
+                self.index_nn_match = True
+            else:
+                self.index_nn_match = False
+        except KeyError:
             self.index_nn_match = False
 
     def check_arfi_benign_match(self, benign):
@@ -140,12 +163,21 @@ class LesionAnalysis:
         except KeyError:
             setattr(self, 'arfi_%s_match' % benign, False)
 
+    def valid_dataset(self):
+        """
+        check if this is a valid dataset to include in the sensitivity analysis
+        """
+        if None in self.arfi and None in self.histology:
+            self.valid = False
+        else:
+            self.valid = True
+
     def print_analysis(self):
         """
         print analysis results to the terminal
         """
         print "================= PATIENT %s =================" % self.pnum
-        if None in self.arfi or None in self.histology:
+        if self.valid is False:
             print "Incomplete dataset; not included in analysis."
         else:
             print "Index lesion EXACT match:\t\t%s" % self.index_exact_match
