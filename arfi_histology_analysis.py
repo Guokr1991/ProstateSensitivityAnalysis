@@ -5,6 +5,7 @@ Pexact = []
 Pnn = []
 Patrophy = []
 Pbph = []
+Pmiss = []
 
 for p in range(56, 107):
     P = LesionAnalysis(p)
@@ -14,6 +15,8 @@ for p in range(56, 107):
             Pexact.append(p)
         if P.index_nn_match:
             Pnn.append(p)
+        else:
+            Pmiss.append(p)
         if P.arfi_atrophy_match:
             Patrophy.append(p)
         if P.arfi_bph_match:
@@ -43,6 +46,7 @@ print "Exact ARFI:Histology Matches:"
 for i, x in enumerate(Pexact):
     print '%s (IOS: %s, Gleason: %s)' % (x, PexactIOS[i], PexactGleason[i])
 print "NN ARFI:Histology Matches: %s" % Pnn
+print "Missed Cases: %s" % Pmiss
 
 print "BENIGN CONFOUNDERS"
 print "=================="
