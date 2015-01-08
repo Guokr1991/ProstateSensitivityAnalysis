@@ -6,15 +6,19 @@ class LesionAnalysis:
     def __init__(self, pnum):
         self.pnum = pnum
         self.root = '/luscinia/ProstateStudy/invivo/Patient%s' % self.pnum
+        # self.root = '/home/mlp6/Downloads/invivo/Patient%s' % self.pnum
         self.arfi_ios = '%s/ARFI_Index_Lesion_IOS.txt' % self.root
         self.hist_lesions = '%s/Histology/HistologyLesions.txt' % self.root
         self.read_arfi()
         self.read_histology()
         self.valid_dataset()
-        self.check_index_exact_match()
-        self.check_index_nn_match()
-        self.check_arfi_benign_match('atrophy')
-        self.check_arfi_benign_match('bph')
+        if self.valid_dataset:
+            self.extract_arfi_index()
+            self.extract_hist_index()
+            self.check_index_exact_match()
+            self.check_index_nn_match()
+            self.check_arfi_benign_match('atrophy')
+            self.check_arfi_benign_match('bph')
 
     def read_arfi(self):
         """
@@ -32,7 +36,7 @@ class LesionAnalysis:
             else:
                 self.arfi['read'] = 'no lesions read'
         except IOError:
-            #print "%s does not exist" % self.arfi_ios
+            # print "%s does not exist" % self.arfi_ios
             self.arfi[None] = None
 
     def read_histology(self):
@@ -48,7 +52,8 @@ class LesionAnalysis:
                 lesion = lesion[:-1]
                 # make sure we hav)e a properly-formatted histology file
                 if not any([x in lesion for x in ['pca', 'bph', 'atrophy']]):
-                    print "WARNING: Malformed histology lesion file (P%s)." % self.pnum
+                    print "WARNING: Malformed histology lesion file (P%s)." % \
+                        self.pnum
                 # there can be multiple pca lesions
                 if 'pca' in lesion:
                     if 'pca' not in self.histology:
@@ -56,15 +61,15 @@ class LesionAnalysis:
                     else:
                         self.histology['pca'].append(lesion.split(', ')[1:])
                 else:
-                    self.histology[lesion.split(', ')[0]] = lesion.split(', ')[1:]
+                    self.histology[lesion.split(', ')[0]] = \
+                        lesion.split(', ')[1:]
         except IOError:
-            #print "%s does not exist" % self.hist_lesions
+            # print "%s does not exist" % self.hist_lesions
             self.histology[None] = None
 
     def nearest_neighbor(self, region):
         """
-        extract the set of nearest neighbor regions; 27 regions based on INSERT
-        CITATION HERE
+        extract the set of nearest neighbor for 27 region prostate
 
         INPUT: region (string) - find nearest neighbors around this region
         """
@@ -90,10 +95,12 @@ class LesionAnalysis:
 
         self.calc_nn_ranges(rindices)
 
-        nn = [[[prostate27roi[i][j][k] for i in self.valid_ranges[0]] for j in self.valid_ranges[1]] for k in self.valid_ranges[2]]
+        nn = [[[prostate27roi[i][j][k] for i in self.valid_ranges[0]]
+               for j in self.valid_ranges[1]] for k in self.valid_ranges[2]]
 
-        print nn
-        return nn
+        nnset = set([x for n in nn for m in n for x in m])
+
+        return nnset
 
     def calc_nn_ranges(self, rindices):
         """
@@ -115,14 +122,33 @@ class LesionAnalysis:
         if rindices[1] == 0:
             self.valid_ranges[2] = range(4)
 
+    def extract_arfi_index(self):
+        """
+        define ARFI index lesion dict
+        """
+        self.arfi_index = {}
+        self.arfi_index['region'] = self.arfi.keys()[0]
+        self.arfi_index['IOS'] = self.arfi.values()[0]
+
+    def extract_hist_index(self):
+        """
+        define histology index lesion dict and nearest neighbor set
+        """
+        self.hist_index = {}
+        try:
+            self.hist_index['region'] = self.histology['pca'][0][0]
+            self.hist_index['Gleason'] = self.histology['pca'][0][2]
+            self.hist_index_nn = \
+                self.nearest_neighbor(self.hist_index['region'])
+        except KeyError:
+            print "No PCA lesion"
+
     def check_index_exact_match(self):
         """
         check for an exact match b/w ARFI and histology index lesions
         """
-        arfi_index = self.arfi.keys()[0]
         try:
-            hist_index = self.histology['pca'][0][0]
-            if arfi_index == hist_index:
+            if self.arfi_index['region'] == self.hist_index['region']:
                 self.index_exact_match = True
             else:
                 self.index_exact_match = False
@@ -133,12 +159,8 @@ class LesionAnalysis:
         """
         check for nearest-neightbor match b/w ARFI and histology index lesions
         """
-        self.arfi_index = self.arfi.keys()[0]
         try:
-            self.hist_index = self.histology['pca'][0][0]
-            self.hist_index_nn = self.nearest_neighbor(self.hist_index)
-
-            if self.arfi_index in self.hist_index_nn:
+            if self.arfi_index['region'] in self.hist_index_nn:
                 self.index_nn_match = True
             else:
                 self.index_nn_match = False
@@ -156,7 +178,8 @@ class LesionAnalysis:
         """
         try:
             benign_regions = self.histology[benign][1:]
-            if any([x in benign_regions for x in self.arfi.keys()]):
+            if any([x in benign_regions for x in self.arfi.keys()]) and \
+               self.hist_index['region'] not in benign_regions:
                 setattr(self, 'arfi_%s_match' % benign, True)
             else:
                 setattr(self, 'arfi_%s_match' % benign, False)
@@ -168,19 +191,20 @@ class LesionAnalysis:
         check if this is a valid dataset to include in the sensitivity analysis
         """
         if None in self.arfi and None in self.histology:
-            self.valid = False
+            self.valid_dataset = False
         else:
-            self.valid = True
+            self.valid_dataset = True
 
     def print_analysis(self):
         """
         print analysis results to the terminal
         """
         print "================= PATIENT %s =================" % self.pnum
-        if self.valid is False:
+        if self.valid_dataset is False:
             print "Incomplete dataset; not included in analysis."
         else:
             print "Index lesion EXACT match:\t\t%s" % self.index_exact_match
-            print "Index lesion NEAREST NEIGHBOR match:\t%s" % self.index_nn_match
+            print "Index lesion NEAREST NEIGHBOR match:\t%s" % \
+                self.index_nn_match
             print "ARFI:Atrophy Match:\t\t\t%s" % self.arfi_atrophy_match
             print "ARFI:BPH Match:\t\t\t\t%s" % self.arfi_atrophy_match
