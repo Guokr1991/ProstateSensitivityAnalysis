@@ -16,8 +16,7 @@ class LesionAnalysis:
             self.arfi_index()
             self.histology_index()
             self.check_index_match()
-            self.check_arfi_benign_match('atrophy')
-            self.check_arfi_benign_match('bph')
+            self.check_benign_match()
 
     def read_arfi(self):
         """
@@ -169,8 +168,8 @@ class LesionAnalysis:
         """
         check for an exact and NN matches b/w ARFI and histology index lesions
         """
+        self.index_match = {}
         try:
-            self.index_match = {}
             if self.histology['index'] is None:
                 self.index_match['exact'] = False
                 self.index_match['nn'] = False
@@ -192,27 +191,27 @@ class LesionAnalysis:
             self.index_match['exact'] = False
             self.index_match['nn'] = False
 
-    def check_arfi_benign_match(self, benign):
+    def check_benign_match(self):
         """
         check if atrophy or bph is present in the exact or nearest neighbor
         region to an ARFI lesion
-
-        INPUT: benign expected to be either 'atrophy' or 'bph'
-
-        EXAMPLE check_arfi_benign_match(self, 'atrophy')
         """
-        try:
-            if self.histology['index'] is None:
-                setattr(self, 'arfi_%s_match' % benign, False)
-            else:
-                benign_regions = self.histology[benign][1:]
-                if any([x in benign_regions for x in self.arfi.keys()]) and \
-                   self.histology['index']['region'] not in benign_regions:
-                    setattr(self, 'arfi_%s_match' % benign, True)
+        self.benign_match = {}
+        for benign in ['atrophy', 'bph']:
+            try:
+                if self.histology['index'] is None:
+                    self.benign_match[benign] = False
                 else:
-                    setattr(self, 'arfi_%s_match' % benign, False)
-        except KeyError:
-            setattr(self, 'arfi_%s_match' % benign, False)
+                    benign_regions = self.histology[benign][1:]
+                    if any([x in benign_regions for x in
+                       self.arfi.keys()]) and \
+                       self.histology['index']['region'] not in \
+                       benign_regions:
+                        self.benign_match[benign] = True
+                    else:
+                        self.benign_match[benign] = False
+            except KeyError:
+                self.benign_match[benign] = False
 
     def valid_dataset(self):
         """

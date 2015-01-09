@@ -17,9 +17,9 @@ for p in range(56, 107):
             Pnn.append(p)
         else:
             Pmiss.append(p)
-        if P.arfi_atrophy_match:
+        if P.benign_match['atrophy']:
             Patrophy.append(p)
-        if P.arfi_bph_match:
+        if P.benign_match['bph']:
             Pbph.append(p)
 
 PexactIOS = []
