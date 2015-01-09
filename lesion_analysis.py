@@ -65,60 +65,6 @@ class LesionAnalysis:
             # print "%s does not exist" % self.hist_lesions
             self.histology[None] = None
 
-    def nearest_neighbor(self, region):
-        """
-        extract the set of nearest neighbor for 27 region prostate
-
-        INPUT: region (string) - find nearest neighbors around this region
-        """
-
-        prostate27roi = [[0 for AP in range(3)] for BA in range(3)]
-        prostate27roi[0][0] = ['13as' for LAT in range(4)]
-        prostate27roi[0][1] = ['2a', '1a', '7a', '8a']
-        prostate27roi[0][2] = ['2p', '1p', '7p', '8p']
-        prostate27roi[1][0] = ['14as' for LAT in range(4)]
-        prostate27roi[1][1] = ['4a', '3a', '9a', '10a']
-        prostate27roi[1][2] = ['4p', '3p', '9p', '10p']
-        prostate27roi[2][0] = ['15as' for LAT in range(4)]
-        prostate27roi[2][1] = ['6a', '5a', '11a', '12a']
-        prostate27roi[2][2] = ['6p', '5p', '11p', '12p']
-
-        # find region index
-        for i, a in enumerate(prostate27roi):
-            for j, b in enumerate(a):
-                for k, c in enumerate(b):
-                    if c == region:
-                        rindices = (i, j, k)
-
-        self.calc_nn_ranges(rindices)
-
-        nn = [[[prostate27roi[i][j][k] for i in self.valid_ranges[0]]
-               for j in self.valid_ranges[1]] for k in self.valid_ranges[2]]
-
-        nnset = set([x for n in nn for m in n for x in m])
-
-        return nnset
-
-    def calc_nn_ranges(self, rindices):
-        """
-        calculate index ranges for nearest neighbor region identification
-        """
-        self.valid_ranges = [range(x-1, x+2) for x in rindices]
-
-        for i in range(3):
-            if min(self.valid_ranges[i]) < 0:
-                self.valid_ranges[i] = self.valid_ranges[i][1:]
-            if i <= 1:
-                if max(self.valid_ranges[i]) > 2:
-                    self.valid_ranges[i] = self.valid_ranges[i][:-1]
-            else:
-                if max(self.valid_ranges[i]) > 3:
-                    self.valid_ranges[i] = self.valid_ranges[i][:-1]
-
-        # AS regions, span entire lateral extent
-        if rindices[1] == 0:
-            self.valid_ranges[2] = range(4)
-
     def arfi_index(self):
         """
         define ARFI index lesion dict based on highest IOS
@@ -136,6 +82,9 @@ class LesionAnalysis:
         """
         define histology index lesion dict and nearest neighbor set
         """
+        from prostate27 import Prostate27
+        prostate = Prostate27()
+
         try:
             # find max Gleason score, then max volume with that max Gleason
             maxGleason = 0
@@ -159,7 +108,9 @@ class LesionAnalysis:
                 index['region'] = self.histology['pca'][0][0]
                 index['Gleason'] = self.histology['pca'][0][2]
                 index['nn'] = \
-                    self.nearest_neighbor(index['region'])
+                    prostate.nearest_neighbors(index['region'])
+                index['location'] = prostate.anterior_posterior(index['region'])
+                index['zone'] = prostate.zone(index['region'])
                 self.histology['index'] = index
             else:
                 print "No clinically-significant PCA lesion"
@@ -235,10 +186,12 @@ class LesionAnalysis:
         if self.valid_dataset is False:
             s.append('Incomplete dataset; not included in analysis.')
         else:
-            s.append('Index lesion EXACT match:\t\t%s' % self.index_match['exact'])
+            s.append('Index lesion EXACT match:\t\t%s' %
+                     self.index_match['exact'])
             s.append('Index lesion NEAREST NEIGHBOR match:\t%s' %
                      self.index_match['nn'])
-            s.append('ARFI:Atrophy Match:\t\t\t%s' % self.benign_match['atrophy'])
+            s.append('ARFI:Atrophy Match:\t\t\t%s' %
+                     self.benign_match['atrophy'])
             s.append('ARFI:BPH Match:\t\t\t\t%s' % self.benign_match['bph'])
 
         return '\n'.join(s)
