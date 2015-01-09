@@ -1,38 +1,20 @@
-Zach's "final" processing code for the ARFI lesion : histopath analysis.
+Prostate Sensitivity Analysis
+=============================
 
-regions27_test.m is the driver script.
+Functions, modules and classes to perform the prostate lesion imaging sensitivity analysis.  This was originally based on Zach's code, but it has been completely re-written to do considerabley more sub-analyses.  The spreadsheet and original csv files that Zach utilized were replaced by individual files in each patient directory.
 
-Google Spreadsheet Master: https://docs.google.com/spreadsheets/d/1YqP2tTq7cqs_wg_ffRaeL_xsTADUAczxyTLCfjle3NI/edit#gid=1159472451
+```write_histology.py``` was used to write Patient*/Histology/HistologyLesions.txt files.  These files have been augmented from their spreadsheet-exported form to include more than just PCA lesion (now atrophy and bph are included).
 
-Notes from Zach:
+```write_ARFI_index_IOS.py``` was used to write Patient*/ARFI_Index_Lesion_IOS.txt files.  These files will now differ from the spreadsheets due to location corrections, etc.
 
-1. loads 49X55 Histopathology worksheet converts to standardized 49X28X4 array
-   where:
- * 3dim 1: binary occupation by tumor [built from dim 2]
- * 3dim 2: tumor volume
- * 3dim 3: gleason grade
- * 3dim 4: posterior/anterior location [built from dim 2]
+```write_MRI_index.py``` was used to write Patient*/MRI_Images/MRI_Index_Region.txt files.
 
-2. repeats similar action for ARFI worksheet, instead of 4 entries in third dim
-   like Histopathology workseet, only 2 entries: binary tumor occupation +
-   indices of suspicion
+```arfi_histology_analysis.py``` is the main analysis driver script that generated the output in ```arfi_histology_analysis.md```.  It calls the ```LesionAnalysis``` class, which can be used for interactive patient analysis:
 
-3. same comparison technique used to determine if hit or miss as old code
+```
+from lesion_analysis import LesionAnalysis
 
-4.  filter technique: checks if a 1 is contained in array after one lesion has
-    been compared against all ARFI ROIs, if 1 is found then ARFI hit the
-    lesion, otherwise ARFI missed the lesion [this 1 or 0 is mapped to a second
-    49 lesion X 1 binary matrix]. The array is then cleared for next lesion. 
+P79 = LesionAnalysis(79)
 
-5. The 49X1 binary matrix is built up into a 5 column datasheet using the 49X28X4 array
- * column 1: binary tumor hit data
- * column 2: patient index
- * column 3: volume
- * column 4: gleason
- * column 5: posterior/anterior
-
-6. this spreadsheet is then filtered into various sub-spreadsheets which are
-   used to calculate sensitivities. These sensitivities are printed, and a bar
-   graph is constructed.
-
-7. future effort: repeat for PPV and IOS calculations.
+print P79
+```
