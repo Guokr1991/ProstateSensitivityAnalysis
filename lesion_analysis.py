@@ -13,7 +13,7 @@ class LesionAnalysis:
         self.read_histology()
         self.valid_dataset()
         if self.valid_dataset:
-            self.arfi_index()
+            self.arfi_lesions()
             self.histology_index()
             self.check_index_match()
             self.check_benign_match()
@@ -65,18 +65,25 @@ class LesionAnalysis:
             # print "%s does not exist" % self.hist_lesions
             self.histology[None] = None
 
-    def arfi_index(self):
+    def arfi_lesions(self):
         """
-        define ARFI index lesion dict based on highest IOS
+        characterize all ARFI lesions and define ARFI index lesion dict based on
+        highest IOS
         """
-        try:
-            index = {}
-            index['IOS'] = max(self.arfi.values())
-            index['region'] = [x for x, y in self.arfi.items() if
-                               y == index['IOS']][0]
-            self.arfi['index'] = index
-        except ValueError:
-            self.arfi['index'] = None
+        if self.arfi.values()[0] != 'no lesions read':
+            try:
+                from prostate27 import Prostate27
+                prostate = Prostate27()
+
+                index = {}
+                index['IOS'] = max(self.arfi.values())
+                index['region'] = [x for x, y in self.arfi.items() if
+                                   y == index['IOS']][0]
+                index['location'] = prostate.anterior_posterior(index['region'])
+                index['zone'] = prostate.zone(index['region'])
+                self.arfi['index'] = index
+            except ValueError:
+                self.arfi['index'] = None
 
     def histology_index(self):
         """
@@ -172,7 +179,7 @@ class LesionAnalysis:
         """
         check if this is a valid dataset to include in the sensitivity analysis
         """
-        if None in self.arfi and None in self.histology:
+        if None in self.arfi or None in self.histology:
             self.valid_dataset = False
         else:
             self.valid_dataset = True
