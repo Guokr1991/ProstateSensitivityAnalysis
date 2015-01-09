@@ -26,7 +26,7 @@ PexactIOS = []
 PexactGleason = []
 for p in Pexact:
     P = LesionAnalysis(p)
-    PexactIOS.append(P.arfi_index['IOS'])
+    PexactIOS.append(P.arfi['index']['IOS'])
     PexactGleason.append(P.hist_index['Gleason'])
 
 print "ARFI:HISTLOGY ANALYSIS"

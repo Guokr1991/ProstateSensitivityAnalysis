@@ -13,7 +13,7 @@ class LesionAnalysis:
         self.read_histology()
         self.valid_dataset()
         if self.valid_dataset:
-            self.extract_arfi_index()
+            self.arfi_index()
             self.extract_hist_index()
             self.check_index_exact_match()
             self.check_index_nn_match()
@@ -86,7 +86,6 @@ class LesionAnalysis:
         prostate27roi[2][2] = ['6p', '5p', '11p', '12p']
 
         # find region index
-        # TODO: replace with list comprehension
         for i, a in enumerate(prostate27roi):
             for j, b in enumerate(a):
                 for k, c in enumerate(b):
@@ -122,13 +121,18 @@ class LesionAnalysis:
         if rindices[1] == 0:
             self.valid_ranges[2] = range(4)
 
-    def extract_arfi_index(self):
+    def arfi_index(self):
         """
-        define ARFI index lesion dict
+        define ARFI index lesion dict based on highest IOS
         """
-        self.arfi_index = {}
-        self.arfi_index['region'] = self.arfi.keys()[0]
-        self.arfi_index['IOS'] = self.arfi.values()[0]
+        index = {}
+        try:
+            index['IOS'] = max(self.arfi.values())
+            index['region'] = [x for x, y in self.arfi.items() if
+                               y == index['IOS']][0]
+            self.arfi['index'] = index
+        except ValueError:
+            self.arfi['index'] = None
 
     def extract_hist_index(self):
         """
@@ -148,7 +152,7 @@ class LesionAnalysis:
         check for an exact match b/w ARFI and histology index lesions
         """
         try:
-            if self.arfi_index['region'] == self.hist_index['region']:
+            if self.arfi['index']['region'] == self.hist_index['region']:
                 self.index_exact_match = True
             else:
                 self.index_exact_match = False
@@ -160,7 +164,7 @@ class LesionAnalysis:
         check for nearest-neightbor match b/w ARFI and histology index lesions
         """
         try:
-            if self.arfi_index['region'] in self.hist_index_nn:
+            if self.arfi['index']['region'] in self.hist_index_nn:
                 self.index_nn_match = True
             else:
                 self.index_nn_match = False
@@ -205,8 +209,8 @@ class LesionAnalysis:
             s.append('Incomplete dataset; not included in analysis.')
         else:
             s.append('Index lesion EXACT match:\t\t%s' % self.index_exact_match)
-            s.append('Index lesion NEAREST NEIGHBOR match:\t%s' % \
-                self.index_nn_match)
+            s.append('Index lesion NEAREST NEIGHBOR match:\t%s' %
+                     self.index_nn_match)
             s.append('ARFI:Atrophy Match:\t\t\t%s' % self.arfi_atrophy_match)
             s.append('ARFI:BPH Match:\t\t\t\t%s' % self.arfi_atrophy_match)
 
