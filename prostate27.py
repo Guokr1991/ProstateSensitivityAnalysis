@@ -5,6 +5,9 @@ class Prostate27:
     def __init__(self):
         self.define_regions()
 
+    def __str__():
+        pass
+
     def define_regions(self):
         """
         define 27 regions based on INSERT REFERENCE HERE
@@ -32,165 +35,36 @@ class Prostate27:
 
         return lesion_region_indices
 
-    '''
-    def nearest_neighbor(self, region):
+    def nearest_neighbor(self, nnranges):
         """
-        extract the set of nearest neighbor for 27 region prostate
-
-        INPUT: region (string) - find nearest neighbors around this region
+        extract the set of nearest neighbors for 27 region prostate
         """
-
-
-        self.calc_nn_ranges(rindices)
-
-        nn = [[[prostate27roi[i][j][k] for i in self.valid_ranges[0]]
-               for j in self.valid_ranges[1]] for k in self.valid_ranges[2]]
+        nn = [[[self.regions[i][j][k] for i in nnranges[0]]
+               for j in nnranges[1]] for k in nnranges[2]]
 
         nnset = set([x for n in nn for m in n for x in m])
 
         return nnset
 
-    def calc_nn_ranges(self, rindices):
+    @staticmethod
+    def nn_ranges(lesion_location):
         """
         calculate index ranges for nearest neighbor region identification
         """
-        self.valid_ranges = [range(x-1, x+2) for x in rindices]
+        nnranges = [range(x-1, x+2) for x in lesion_location]
 
         for i in range(3):
-            if min(self.valid_ranges[i]) < 0:
-                self.valid_ranges[i] = self.valid_ranges[i][1:]
+            if min(nnranges[i]) < 0:
+                nnranges[i] = nnranges[i][1:]
             if i <= 1:
-                if max(self.valid_ranges[i]) > 2:
-                    self.valid_ranges[i] = self.valid_ranges[i][:-1]
+                if max(nnranges[i]) > 2:
+                    nnranges[i] = nnranges[i][:-1]
             else:
-                if max(self.valid_ranges[i]) > 3:
-                    self.valid_ranges[i] = self.valid_ranges[i][:-1]
+                if max(nnranges[i]) > 3:
+                    nnranges[i] = nnranges[i][:-1]
 
         # AS regions, span entire lateral extent
-        if rindices[1] == 0:
-            self.valid_ranges[2] = range(4)
+        if lesion_location[1] == 0:
+            nnranges[2] = range(4)
 
-    def arfi_index(self):
-        """
-        define ARFI index lesion dict based on highest IOS
-        """
-        try:
-            index = {}
-            index['IOS'] = max(self.arfi.values())
-            index['region'] = [x for x, y in self.arfi.items() if
-                               y == index['IOS']][0]
-            self.arfi['index'] = index
-        except ValueError:
-            self.arfi['index'] = None
-
-    def histology_index(self):
-        """
-        define histology index lesion dict and nearest neighbor set
-        """
-        try:
-            # find max Gleason score, then max volume with that max Gleason
-            maxGleason = 0
-            maxVolumeCC = 0
-            for lesion in self.histology['pca']:
-                # Gleason scores that weren't reported were recorded as '-1'
-                # these will be set to 6 for now
-                if lesion[2] == '-1':
-                    lesion[2] = '6'
-                if lesion[2] > maxGleason:
-                    maxGleason = lesion[2]
-                    maxVolumeCC = lesion[1]
-                if lesion[2] == maxGleason:
-                    if lesion[1] > maxVolumeCC:
-                        maxGleason = lesion[2]
-                        maxVolumeCC = lesion[1]
-
-            # make sure the lesion is clinically significant
-            if maxGleason == 7 or (maxGleason >= 6 and maxVolumeCC >= 500):
-                index = {}
-                index['region'] = self.histology['pca'][0][0]
-                index['Gleason'] = self.histology['pca'][0][2]
-                index['nn'] = \
-                    self.nearest_neighbor(index['region'])
-                self.histology['index'] = index
-            else:
-                print "No clinically-significant PCA lesion"
-                self.histology['index'] = None
-        except KeyError:
-            print "No PCA lesion"
-            self.histology['index'] = None
-
-    def check_index_match(self):
-        """
-        check for an exact and NN matches b/w ARFI and histology index lesions
-        """
-        self.index_match = {}
-        try:
-            if self.histology['index'] is None:
-                self.index_match['exact'] = False
-                self.index_match['nn'] = False
-            else:
-                # check for an exact match
-                if self.arfi['index']['region'] == \
-                   self.histology['index']['region']:
-                    self.index_match['exact'] = True
-                else:
-                    self.index_match['exact'] = False
-
-                # check for a NN match
-                if self.arfi['index']['region'] in \
-                   self.histology['index']['nn']:
-                    self.index_match['nn'] = True
-                else:
-                    self.index_match['nn'] = False
-        except KeyError:
-            self.index_match['exact'] = False
-            self.index_match['nn'] = False
-
-    def check_benign_match(self):
-        """
-        check if atrophy or bph is present in the exact or nearest neighbor
-        region to an ARFI lesion
-        """
-        self.benign_match = {}
-        for benign in ['atrophy', 'bph']:
-            try:
-                if self.histology['index'] is None:
-                    self.benign_match[benign] = False
-                else:
-                    benign_regions = self.histology[benign]
-                    if any([x in benign_regions for x in
-                       self.arfi.keys()]) and \
-                       self.histology['index']['region'] not in \
-                       benign_regions:
-                        self.benign_match[benign] = True
-                    else:
-                        self.benign_match[benign] = False
-            except KeyError:
-                self.benign_match[benign] = False
-
-    def valid_dataset(self):
-        """
-        check if this is a valid dataset to include in the sensitivity analysis
-        """
-        if None in self.arfi and None in self.histology:
-            self.valid_dataset = False
-        else:
-            self.valid_dataset = True
-
-    def __str__(self):
-        """
-        print analysis results
-        """
-
-        s = ['================= PATIENT %s =================' % self.pnum]
-        if self.valid_dataset is False:
-            s.append('Incomplete dataset; not included in analysis.')
-        else:
-            s.append('Index lesion EXACT match:\t\t%s' % self.index_match['exact'])
-            s.append('Index lesion NEAREST NEIGHBOR match:\t%s' %
-                     self.index_match['nn'])
-            s.append('ARFI:Atrophy Match:\t\t\t%s' % self.benign_match['atrophy'])
-            s.append('ARFI:BPH Match:\t\t\t\t%s' % self.benign_match['bph'])
-
-        return '\n'.join(s)
-    '''
+        return nnranges

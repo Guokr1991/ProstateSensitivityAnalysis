@@ -78,34 +78,11 @@ class LesionAnalysis:
 
         lesion_location = prostate.location(region)
 
-        self.calc_nn_ranges(lesion_location)
+        nnranges = prostate.nn_ranges(lesion_location)
 
-        nn = [[[prostate.regions[i][j][k] for i in self.valid_ranges[0]]
-               for j in self.valid_ranges[1]] for k in self.valid_ranges[2]]
-
-        nnset = set([x for n in nn for m in n for x in m])
+        nnset = prostate.nearest_neighbor(nnranges)
 
         return nnset
-
-    def calc_nn_ranges(self, lesion_location):
-        """
-        calculate index ranges for nearest neighbor region identification
-        """
-        self.valid_ranges = [range(x-1, x+2) for x in lesion_location]
-
-        for i in range(3):
-            if min(self.valid_ranges[i]) < 0:
-                self.valid_ranges[i] = self.valid_ranges[i][1:]
-            if i <= 1:
-                if max(self.valid_ranges[i]) > 2:
-                    self.valid_ranges[i] = self.valid_ranges[i][:-1]
-            else:
-                if max(self.valid_ranges[i]) > 3:
-                    self.valid_ranges[i] = self.valid_ranges[i][:-1]
-
-        # AS regions, span entire lateral extent
-        if lesion_location[1] == 0:
-            self.valid_ranges[2] = range(4)
 
     def arfi_index(self):
         """
