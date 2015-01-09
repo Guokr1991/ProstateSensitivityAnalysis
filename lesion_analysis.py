@@ -195,16 +195,19 @@ class LesionAnalysis:
         else:
             self.valid_dataset = True
 
-    def print_analysis(self):
+    def __str__(self):
         """
-        print analysis results to the terminal
+        print analysis results
         """
-        print "================= PATIENT %s =================" % self.pnum
+
+        s = ['================= PATIENT %s =================' % self.pnum]
         if self.valid_dataset is False:
-            print "Incomplete dataset; not included in analysis."
+            s.append('Incomplete dataset; not included in analysis.')
         else:
-            print "Index lesion EXACT match:\t\t%s" % self.index_exact_match
-            print "Index lesion NEAREST NEIGHBOR match:\t%s" % \
-                self.index_nn_match
-            print "ARFI:Atrophy Match:\t\t\t%s" % self.arfi_atrophy_match
-            print "ARFI:BPH Match:\t\t\t\t%s" % self.arfi_atrophy_match
+            s.append('Index lesion EXACT match:\t\t%s' % self.index_exact_match)
+            s.append('Index lesion NEAREST NEIGHBOR match:\t%s' % \
+                self.index_nn_match)
+            s.append('ARFI:Atrophy Match:\t\t\t%s' % self.arfi_atrophy_match)
+            s.append('ARFI:BPH Match:\t\t\t\t%s' % self.arfi_atrophy_match)
+
+        return '\n'.join(s)
