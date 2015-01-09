@@ -110,6 +110,7 @@ class LesionAnalysis:
                 index['nn'] = \
                     prostate.nearest_neighbors(index['region'])
                 index['location'] = prostate.anterior_posterior(index['region'])
+                index['zone'] = prostate.zone(index['region'])
                 self.histology['index'] = index
             else:
                 print "No clinically-significant PCA lesion"
@@ -185,10 +186,12 @@ class LesionAnalysis:
         if self.valid_dataset is False:
             s.append('Incomplete dataset; not included in analysis.')
         else:
-            s.append('Index lesion EXACT match:\t\t%s' % self.index_match['exact'])
+            s.append('Index lesion EXACT match:\t\t%s' %
+                     self.index_match['exact'])
             s.append('Index lesion NEAREST NEIGHBOR match:\t%s' %
                      self.index_match['nn'])
-            s.append('ARFI:Atrophy Match:\t\t\t%s' % self.benign_match['atrophy'])
+            s.append('ARFI:Atrophy Match:\t\t\t%s' %
+                     self.benign_match['atrophy'])
             s.append('ARFI:BPH Match:\t\t\t\t%s' % self.benign_match['bph'])
 
         return '\n'.join(s)

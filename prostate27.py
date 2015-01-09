@@ -85,3 +85,15 @@ class Prostate27:
             location = 'posterior'
 
         return location
+
+    def zone(self, lesion_region):
+        """
+        determine lesion anatomic zone (PZ or CG)
+        """
+        cg = set(['1a', '7a', '3a', '9a', '5a', '11a'])
+        if lesion_region in cg:
+            zone = 'central gland'
+        else:
+            zone = 'peripheral zone'
+
+        return zone
