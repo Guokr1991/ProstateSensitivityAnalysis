@@ -74,16 +74,11 @@ class LesionAnalysis:
 
         from prostate27 import Prostate27
 
-        prostate = Prostate27(region)
+        prostate = Prostate27()
 
-        # find region index
-        for i, a in enumerate(prostate.regions):
-            for j, b in enumerate(a):
-                for k, c in enumerate(b):
-                    if c == region:
-                        rindices = (i, j, k)
+        lesion_location = prostate.location(region)
 
-        self.calc_nn_ranges(rindices)
+        self.calc_nn_ranges(lesion_location)
 
         nn = [[[prostate.regions[i][j][k] for i in self.valid_ranges[0]]
                for j in self.valid_ranges[1]] for k in self.valid_ranges[2]]
@@ -92,11 +87,11 @@ class LesionAnalysis:
 
         return nnset
 
-    def calc_nn_ranges(self, rindices):
+    def calc_nn_ranges(self, lesion_location):
         """
         calculate index ranges for nearest neighbor region identification
         """
-        self.valid_ranges = [range(x-1, x+2) for x in rindices]
+        self.valid_ranges = [range(x-1, x+2) for x in lesion_location]
 
         for i in range(3):
             if min(self.valid_ranges[i]) < 0:
@@ -109,7 +104,7 @@ class LesionAnalysis:
                     self.valid_ranges[i] = self.valid_ranges[i][:-1]
 
         # AS regions, span entire lateral extent
-        if rindices[1] == 0:
+        if lesion_location[1] == 0:
             self.valid_ranges[2] = range(4)
 
     def arfi_index(self):

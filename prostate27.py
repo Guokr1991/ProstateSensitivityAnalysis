@@ -2,8 +2,7 @@ class Prostate27:
     """
     define 27 regions, anatomic location (anterior/posterior, PZ/CG)
     """
-    def __init__(self, lesion_region):
-        self.lesion_region = lesion_region
+    def __init__(self):
         self.define_regions()
 
     def define_regions(self):
@@ -21,15 +20,17 @@ class Prostate27:
         self.regions[2][1] = ['6a', '5a', '11a', '12a']
         self.regions[2][2] = ['6p', '5p', '11p', '12p']
 
-    def location(self):
+    def location(self, lesion_region):
         """
         determine region location indices
         """
         for i, a in enumerate(self.regions):
             for j, b in enumerate(a):
                 for k, c in enumerate(b):
-                    if c == self.lesion_region:
-                        self.lesion_region_indices = (i, j, k)
+                    if c == lesion_region:
+                        lesion_region_indices = (i, j, k)
+
+        return lesion_region_indices
 
     '''
     def nearest_neighbor(self, region):
