@@ -1,70 +1,29 @@
-class LesionAnalysis:
+class Prostate27:
     """
-    class for the prostate lesion analysis b/w ARFI and histology
+    define 27 regions, anatomic location (anterior/posterior, PZ/CG)
     """
+    def __init__(self):
+        self.regions = self.define_regions()
 
-    def __init__(self, pnum):
-        self.pnum = pnum
-        self.root = '/luscinia/ProstateStudy/invivo/Patient%s' % self.pnum
-        # self.root = '/home/mlp6/Downloads/invivo/Patient%s' % self.pnum
-        self.arfi_ios = '%s/ARFI_Index_Lesion_IOS.txt' % self.root
-        self.hist_lesions = '%s/Histology/HistologyLesions.txt' % self.root
-        self.read_arfi()
-        self.read_histology()
-        self.valid_dataset()
-        if self.valid_dataset:
-            self.arfi_index()
-            self.histology_index()
-            self.check_index_match()
-            self.check_benign_match()
-
-    def read_arfi(self):
+    @staticmethod
+    def define_regions():
         """
-        read ARFI lesion IOS data
+        define 27 regions based on INSERT REFERENCE HERE
         """
-        self.arfi = {}
-        try:
-            with open(self.arfi_ios, 'r') as f:
-                arfiios = f.readlines()
+        regions = [[0 for AP in range(3)] for BA in range(3)]
+        regions[0][0] = ['13as' for LAT in range(4)]
+        regions[0][1] = ['2a', '1a', '7a', '8a']
+        regions[0][2] = ['2p', '1p', '7p', '8p']
+        regions[1][0] = ['14as' for LAT in range(4)]
+        regions[1][1] = ['4a', '3a', '9a', '10a']
+        regions[1][2] = ['4p', '3p', '9p', '10p']
+        regions[2][0] = ['15as' for LAT in range(4)]
+        regions[2][1] = ['6a', '5a', '11a', '12a']
+        regions[2][2] = ['6p', '5p', '11p', '12p']
 
-            if 'None' not in arfiios:
-                for lesion in arfiios:
-                    lesion = lesion[:-1]
-                    self.arfi[lesion.split(', ')[0]] = lesion.split(', ')[1]
-            else:
-                self.arfi['read'] = 'no lesions read'
-        except IOError:
-            # print "%s does not exist" % self.arfi_ios
-            self.arfi[None] = None
+        return regions
 
-    def read_histology(self):
-        """
-        head histology pca, atrophy and bph lesions
-        """
-        self.histology = {}
-        try:
-            with open(self.hist_lesions, 'r') as f:
-                histread = f.readlines()
-
-            for lesion in histread:
-                lesion = lesion[:-1]
-                # make sure we hav)e a properly-formatted histology file
-                if not any([x in lesion for x in ['pca', 'bph', 'atrophy']]):
-                    print "WARNING: Malformed histology lesion file (P%s)." % \
-                        self.pnum
-                # there can be multiple pca lesions
-                if 'pca' in lesion:
-                    if 'pca' not in self.histology:
-                        self.histology['pca'] = [lesion.split(', ')[1:]]
-                    else:
-                        self.histology['pca'].append(lesion.split(', ')[1:])
-                else:
-                    self.histology[lesion.split(', ')[0]] = \
-                        lesion.split(', ')[1:]
-        except IOError:
-            # print "%s does not exist" % self.hist_lesions
-            self.histology[None] = None
-
+    '''
     def nearest_neighbor(self, region):
         """
         extract the set of nearest neighbor for 27 region prostate
@@ -72,12 +31,9 @@ class LesionAnalysis:
         INPUT: region (string) - find nearest neighbors around this region
         """
 
-        from prostate27 import Prostate27
-
-        prostate = Prostate27()
 
         # find region index
-        for i, a in enumerate(prostate.regions):
+        for i, a in enumerate(prostate27roi):
             for j, b in enumerate(a):
                 for k, c in enumerate(b):
                     if c == region:
@@ -85,7 +41,7 @@ class LesionAnalysis:
 
         self.calc_nn_ranges(rindices)
 
-        nn = [[[prostate.regions[i][j][k] for i in self.valid_ranges[0]]
+        nn = [[[prostate27roi[i][j][k] for i in self.valid_ranges[0]]
                for j in self.valid_ranges[1]] for k in self.valid_ranges[2]]
 
         nnset = set([x for n in nn for m in n for x in m])
@@ -235,3 +191,4 @@ class LesionAnalysis:
             s.append('ARFI:BPH Match:\t\t\t\t%s' % self.benign_match['bph'])
 
         return '\n'.join(s)
+    '''
