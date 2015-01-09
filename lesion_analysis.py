@@ -14,7 +14,7 @@ class LesionAnalysis:
         self.valid_dataset()
         if self.valid_dataset:
             self.arfi_index()
-            self.extract_hist_index()
+            self.histology_index()
             self.check_index_exact_match()
             self.check_index_nn_match()
             self.check_arfi_benign_match('atrophy')
@@ -125,8 +125,8 @@ class LesionAnalysis:
         """
         define ARFI index lesion dict based on highest IOS
         """
-        index = {}
         try:
+            index = {}
             index['IOS'] = max(self.arfi.values())
             index['region'] = [x for x, y in self.arfi.items() if
                                y == index['IOS']][0]
@@ -134,25 +134,27 @@ class LesionAnalysis:
         except ValueError:
             self.arfi['index'] = None
 
-    def extract_hist_index(self):
+    def histology_index(self):
         """
         define histology index lesion dict and nearest neighbor set
         """
-        self.hist_index = {}
         try:
-            self.hist_index['region'] = self.histology['pca'][0][0]
-            self.hist_index['Gleason'] = self.histology['pca'][0][2]
-            self.hist_index_nn = \
-                self.nearest_neighbor(self.hist_index['region'])
+            index = {}
+            index['region'] = self.histology['pca'][0][0]
+            index['Gleason'] = self.histology['pca'][0][2]
+            index['nn'] = \
+                self.nearest_neighbor(index['region'])
+            self.histology['index'] = index
         except KeyError:
             print "No PCA lesion"
+            self.histology['index'] = None
 
     def check_index_exact_match(self):
         """
         check for an exact match b/w ARFI and histology index lesions
         """
         try:
-            if self.arfi['index']['region'] == self.hist_index['region']:
+            if self.arfi['index']['region'] == self.histology['index']['region']:
                 self.index_exact_match = True
             else:
                 self.index_exact_match = False
@@ -164,7 +166,7 @@ class LesionAnalysis:
         check for nearest-neightbor match b/w ARFI and histology index lesions
         """
         try:
-            if self.arfi['index']['region'] in self.hist_index_nn:
+            if self.arfi['index']['region'] in self.histology['index']['nn']:
                 self.index_nn_match = True
             else:
                 self.index_nn_match = False
