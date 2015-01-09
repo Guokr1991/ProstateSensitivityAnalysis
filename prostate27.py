@@ -2,26 +2,34 @@ class Prostate27:
     """
     define 27 regions, anatomic location (anterior/posterior, PZ/CG)
     """
-    def __init__(self):
-        self.regions = self.define_regions()
+    def __init__(self, lesion_region):
+        self.lesion_region = lesion_region
+        self.define_regions()
 
-    @staticmethod
-    def define_regions():
+    def define_regions(self):
         """
         define 27 regions based on INSERT REFERENCE HERE
         """
-        regions = [[0 for AP in range(3)] for BA in range(3)]
-        regions[0][0] = ['13as' for LAT in range(4)]
-        regions[0][1] = ['2a', '1a', '7a', '8a']
-        regions[0][2] = ['2p', '1p', '7p', '8p']
-        regions[1][0] = ['14as' for LAT in range(4)]
-        regions[1][1] = ['4a', '3a', '9a', '10a']
-        regions[1][2] = ['4p', '3p', '9p', '10p']
-        regions[2][0] = ['15as' for LAT in range(4)]
-        regions[2][1] = ['6a', '5a', '11a', '12a']
-        regions[2][2] = ['6p', '5p', '11p', '12p']
+        self.regions = [[0 for AP in range(3)] for BA in range(3)]
+        self.regions[0][0] = ['13as' for LAT in range(4)]
+        self.regions[0][1] = ['2a', '1a', '7a', '8a']
+        self.regions[0][2] = ['2p', '1p', '7p', '8p']
+        self.regions[1][0] = ['14as' for LAT in range(4)]
+        self.regions[1][1] = ['4a', '3a', '9a', '10a']
+        self.regions[1][2] = ['4p', '3p', '9p', '10p']
+        self.regions[2][0] = ['15as' for LAT in range(4)]
+        self.regions[2][1] = ['6a', '5a', '11a', '12a']
+        self.regions[2][2] = ['6p', '5p', '11p', '12p']
 
-        return regions
+    def location(self):
+        """
+        determine region location indices
+        """
+        for i, a in enumerate(self.regions):
+            for j, b in enumerate(a):
+                for k, c in enumerate(b):
+                    if c == self.lesion_region:
+                        self.lesion_region_indices = (i, j, k)
 
     '''
     def nearest_neighbor(self, region):
@@ -31,13 +39,6 @@ class Prostate27:
         INPUT: region (string) - find nearest neighbors around this region
         """
 
-
-        # find region index
-        for i, a in enumerate(prostate27roi):
-            for j, b in enumerate(a):
-                for k, c in enumerate(b):
-                    if c == region:
-                        rindices = (i, j, k)
 
         self.calc_nn_ranges(rindices)
 

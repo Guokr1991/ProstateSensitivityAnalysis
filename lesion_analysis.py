@@ -74,7 +74,7 @@ class LesionAnalysis:
 
         from prostate27 import Prostate27
 
-        prostate = Prostate27()
+        prostate = Prostate27(region)
 
         # find region index
         for i, a in enumerate(prostate.regions):
