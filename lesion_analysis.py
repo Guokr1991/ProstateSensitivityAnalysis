@@ -141,6 +141,10 @@ class LesionAnalysis:
             maxGleason = 0
             maxVolumeCC = 0
             for lesion in self.histology['pca']:
+                # Gleason scores that weren't reported were recorded as '-1'
+                # these will be set to 6 for now
+                if lesion[2] == '-1':
+                    lesion[2] = '6'
                 if lesion[2] > maxGleason:
                     maxGleason = lesion[2]
                     maxVolumeCC = lesion[1]
