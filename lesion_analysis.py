@@ -139,6 +139,18 @@ class LesionAnalysis:
         define histology index lesion dict and nearest neighbor set
         """
         try:
+            # find max Gleason score, then max volume with that max Gleason
+            maxG = 0
+            maxVol = 0
+            for lesion in self.histology['pca']:
+                if lesion[2] > maxG:
+                    maxG = lesion[2]
+                    maxVol = lesion[1]
+                if lesion[2] == maxG:
+                    if lesion[1] > maxVol:
+                        maxG = lesion[2]
+                        maxVol = lesion[1]
+
             index = {}
             index['region'] = self.histology['pca'][0][0]
             index['Gleason'] = self.histology['pca'][0][2]
