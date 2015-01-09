@@ -65,25 +65,6 @@ class LesionAnalysis:
             # print "%s does not exist" % self.hist_lesions
             self.histology[None] = None
 
-    def nearest_neighbor(self, region):
-        """
-        extract the set of nearest neighbor for 27 region prostate
-
-        INPUT: region (string) - find nearest neighbors around this region
-        """
-
-        from prostate27 import Prostate27
-
-        prostate = Prostate27()
-
-        lesion_location = prostate.location(region)
-
-        nnranges = prostate.nn_ranges(lesion_location)
-
-        nnset = prostate.nearest_neighbor(nnranges)
-
-        return nnset
-
     def arfi_index(self):
         """
         define ARFI index lesion dict based on highest IOS
@@ -101,6 +82,9 @@ class LesionAnalysis:
         """
         define histology index lesion dict and nearest neighbor set
         """
+        from prostate27 import Prostate27
+        prostate = Prostate27()
+
         try:
             # find max Gleason score, then max volume with that max Gleason
             maxGleason = 0
@@ -124,7 +108,7 @@ class LesionAnalysis:
                 index['region'] = self.histology['pca'][0][0]
                 index['Gleason'] = self.histology['pca'][0][2]
                 index['nn'] = \
-                    self.nearest_neighbor(index['region'])
+                    prostate.nearest_neighbors(index['region'])
                 self.histology['index'] = index
             else:
                 print "No clinically-significant PCA lesion"
