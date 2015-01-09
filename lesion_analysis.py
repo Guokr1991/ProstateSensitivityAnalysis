@@ -109,6 +109,7 @@ class LesionAnalysis:
                 index['Gleason'] = self.histology['pca'][0][2]
                 index['nn'] = \
                     prostate.nearest_neighbors(index['region'])
+                index['location'] = prostate.anterior_posterior(index['region'])
                 self.histology['index'] = index
             else:
                 print "No clinically-significant PCA lesion"

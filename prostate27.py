@@ -72,3 +72,16 @@ class Prostate27:
             nnranges[2] = range(4)
 
         return nnranges
+
+    def anterior_posterior(self, lesion_region):
+        """
+        determine if lesion is in anterior or posterior location
+        """
+        lesion_region_indices = self.location(lesion_region)
+
+        if lesion_region_indices <= 1:
+            location = 'anterior'
+        else:
+            location = 'posterior'
+
+        return location
