@@ -206,7 +206,7 @@ class LesionAnalysis:
                 if self.histology['index'] is None:
                     self.benign_match[benign] = False
                 else:
-                    benign_regions = self.histology[benign][1:]
+                    benign_regions = self.histology[benign]
                     if any([x in benign_regions for x in
                        self.arfi.keys()]) and \
                        self.histology['index']['region'] not in \
