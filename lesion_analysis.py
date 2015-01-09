@@ -14,9 +14,8 @@ class LesionAnalysis:
         self.valid_dataset()
         if self.valid_dataset:
             self.arfi_index()
-            self.extract_hist_index()
-            self.check_index_exact_match()
-            self.check_index_nn_match()
+            self.histology_index()
+            self.check_index_match()
             self.check_arfi_benign_match('atrophy')
             self.check_arfi_benign_match('bph')
 
@@ -125,8 +124,8 @@ class LesionAnalysis:
         """
         define ARFI index lesion dict based on highest IOS
         """
-        index = {}
         try:
+            index = {}
             index['IOS'] = max(self.arfi.values())
             index['region'] = [x for x, y in self.arfi.items() if
                                y == index['IOS']][0]
@@ -134,42 +133,64 @@ class LesionAnalysis:
         except ValueError:
             self.arfi['index'] = None
 
-    def extract_hist_index(self):
+    def histology_index(self):
         """
         define histology index lesion dict and nearest neighbor set
         """
-        self.hist_index = {}
         try:
-            self.hist_index['region'] = self.histology['pca'][0][0]
-            self.hist_index['Gleason'] = self.histology['pca'][0][2]
-            self.hist_index_nn = \
-                self.nearest_neighbor(self.hist_index['region'])
+            # find max Gleason score, then max volume with that max Gleason
+            maxGleason = 0
+            maxVolumeCC = 0
+            for lesion in self.histology['pca']:
+                if lesion[2] > maxGleason:
+                    maxGleason = lesion[2]
+                    maxVolumeCC = lesion[1]
+                if lesion[2] == maxGleason:
+                    if lesion[1] > maxVolumeCC:
+                        maxGleason = lesion[2]
+                        maxVolumeCC = lesion[1]
+
+            # make sure the lesion is clinically significant
+            if maxGleason == 7 or (maxGleason >= 6 and maxVolumeCC >= 500):
+                index = {}
+                index['region'] = self.histology['pca'][0][0]
+                index['Gleason'] = self.histology['pca'][0][2]
+                index['nn'] = \
+                    self.nearest_neighbor(index['region'])
+                self.histology['index'] = index
+            else:
+                print "No clinically-significant PCA lesion"
+                self.histology['index'] = None
         except KeyError:
             print "No PCA lesion"
+            self.histology['index'] = None
 
-    def check_index_exact_match(self):
+    def check_index_match(self):
         """
-        check for an exact match b/w ARFI and histology index lesions
+        check for an exact and NN matches b/w ARFI and histology index lesions
         """
         try:
-            if self.arfi['index']['region'] == self.hist_index['region']:
-                self.index_exact_match = True
+            self.index_match = {}
+            if self.histology['index'] is None:
+                self.index_match['exact'] = False
+                self.index_match['nn'] = False
             else:
-                self.index_exact_match = False
-        except KeyError:
-            self.index_exact_match = False
+                # check for an exact match
+                if self.arfi['index']['region'] == \
+                   self.histology['index']['region']:
+                    self.index_match['exact'] = True
+                else:
+                    self.index_match['exact'] = False
 
-    def check_index_nn_match(self):
-        """
-        check for nearest-neightbor match b/w ARFI and histology index lesions
-        """
-        try:
-            if self.arfi['index']['region'] in self.hist_index_nn:
-                self.index_nn_match = True
-            else:
-                self.index_nn_match = False
+                # check for a NN match
+                if self.arfi['index']['region'] in \
+                   self.histology['index']['nn']:
+                    self.index_match['nn'] = True
+                else:
+                    self.index_match['nn'] = False
         except KeyError:
-            self.index_nn_match = False
+            self.index_match['exact'] = False
+            self.index_match['nn'] = False
 
     def check_arfi_benign_match(self, benign):
         """
@@ -181,12 +202,15 @@ class LesionAnalysis:
         EXAMPLE check_arfi_benign_match(self, 'atrophy')
         """
         try:
-            benign_regions = self.histology[benign][1:]
-            if any([x in benign_regions for x in self.arfi.keys()]) and \
-               self.hist_index['region'] not in benign_regions:
-                setattr(self, 'arfi_%s_match' % benign, True)
-            else:
+            if self.histology['index'] is None:
                 setattr(self, 'arfi_%s_match' % benign, False)
+            else:
+                benign_regions = self.histology[benign][1:]
+                if any([x in benign_regions for x in self.arfi.keys()]) and \
+                   self.histology['index']['region'] not in benign_regions:
+                    setattr(self, 'arfi_%s_match' % benign, True)
+                else:
+                    setattr(self, 'arfi_%s_match' % benign, False)
         except KeyError:
             setattr(self, 'arfi_%s_match' % benign, False)
 

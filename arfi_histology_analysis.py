@@ -11,9 +11,9 @@ for p in range(56, 107):
     P = LesionAnalysis(p)
     if P.valid_dataset:
         Ptotal.append(p)
-        if P.index_exact_match:
+        if P.index_match['exact']:
             Pexact.append(p)
-        if P.index_nn_match:
+        if P.index_match['nn']:
             Pnn.append(p)
         else:
             Pmiss.append(p)
@@ -27,9 +27,9 @@ PexactGleason = []
 for p in Pexact:
     P = LesionAnalysis(p)
     PexactIOS.append(P.arfi['index']['IOS'])
-    PexactGleason.append(P.hist_index['Gleason'])
+    PexactGleason.append(P.histology['index']['Gleason'])
 
-print "ARFI:HISTLOGY ANALYSIS"
+print "ARFI:HISTOLOGY ANALYSIS"
 print "======================"
 print "Valid Patients (%i): %s" % (len(Ptotal), Ptotal)
 print "INDEX LESIONS"
