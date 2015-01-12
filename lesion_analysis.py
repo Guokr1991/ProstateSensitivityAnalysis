@@ -14,7 +14,7 @@ class LesionAnalysis:
         self.valid_dataset()
         if self.valid_dataset:
             self.arfi_lesions()
-            self.histology_index()
+            self.histology_lesions()
             self.check_index_match()
             self.check_benign_match()
 
@@ -85,46 +85,67 @@ class LesionAnalysis:
             except ValueError:
                 self.arfi['index'] = None
 
-    def histology_index(self):
+            # specify location and zone for each lesion
+            for lesion in self.arfi:
+                if 'index' not in lesion:
+                    self.arfi[lesion] = {'IOS': self.arfi["%s" % lesion],
+                                         'location':
+                                         prostate.anterior_posterior(lesion),
+                                         'zone': prostate.zone(lesion)}
+
+    def histology_lesions(self):
         """
-        define histology index lesion dict and nearest neighbor set
+        characterize all histology lesions in dict, including index, nearest
+        neighbors, clinical significance, location and zone
         """
         from prostate27 import Prostate27
-        prostate = Prostate27()
+        p = Prostate27()
 
         try:
             # find max Gleason score, then max volume with that max Gleason
-            maxGleason = 0
-            maxVolumeCC = 0
+            # preference given to first entry in file
             for lesion in self.histology['pca']:
                 # Gleason scores that weren't reported were recorded as '-1'
                 # these will be set to 6 for now
                 if lesion[2] == '-1':
                     lesion[2] = '6'
-                if lesion[2] > maxGleason:
-                    maxGleason = lesion[2]
-                    maxVolumeCC = lesion[1]
-                if lesion[2] == maxGleason:
-                    if lesion[1] > maxVolumeCC:
-                        maxGleason = lesion[2]
-                        maxVolumeCC = lesion[1]
-
-            # make sure the lesion is clinically significant
-            if maxGleason == 7 or (maxGleason >= 6 and maxVolumeCC >= 500):
-                index = {}
-                index['region'] = self.histology['pca'][0][0]
-                index['Gleason'] = self.histology['pca'][0][2]
-                index['nn'] = \
-                    prostate.nearest_neighbors(index['region'])
-                index['location'] = prostate.anterior_posterior(index['region'])
-                index['zone'] = prostate.zone(index['region'])
-                self.histology['index'] = index
-            else:
+                # check if the lesion is clinically significant
+                # accept the first row if that is significant since clinical
+                # reads of index were entered first
+                if lesion[2] >= 7 or (lesion[2] >= 6 and lesion[1] >= 500):
+                    index = {}
+                    index['region'] = lesion[0]
+                    index['Gleason'] = lesion[2]
+                    index['nn'] = p.nearest_neighbors(index['region'])
+                    index['location'] = \
+                        p.anterior_posterior(index['region'])
+                    index['zone'] = p.zone(index['region'])
+                    self.histology['index'] = index
+                    break
+            if not self.histology['index']:
                 print "No clinically-significant PCA lesion"
                 self.histology['index'] = None
+            for lcnt, les in enumerate(self.histology['pca']):
+                if self.clin_sig(les[1], les[2]):
+                    self.histology['pca'][lcnt].append('ClinSig')
+                else:
+                    self.histology['pca'][lcnt].append('NotClinSig')
+                self.histology['pca'][lcnt].append(p.anterior_posterior(les[0]))
+                self.histology['pca'][lcnt].append(p.zone(les[0]))
         except KeyError:
             print "No PCA lesion"
             self.histology['index'] = None
+
+    def clin_sig(self, volume, gleason):
+        """
+        determine lesion clinical significance
+        """
+        volume = float(volume)
+        gleason = int(gleason)
+        if (gleason >= 7) or (gleason >= 6 and volume >= 500):
+            return True
+        else:
+            return False
 
     def check_index_match(self):
         """
