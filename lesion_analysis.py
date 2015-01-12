@@ -95,43 +95,31 @@ class LesionAnalysis:
 
         try:
             # find max Gleason score, then max volume with that max Gleason
-            maxGleason = 0
-            maxVolumeCC = 0
-            for lesion_count, lesion in enumerate(self.histology['pca']):
+            # preference given to first entry in file
+            for lesion in self.histology['pca']:
                 # Gleason scores that weren't reported were recorded as '-1'
                 # these will be set to 6 for now
                 if lesion[2] == '-1':
                     lesion[2] = '6'
-                if lesion[2] > maxGleason:
-                    maxGleason = lesion[2]
-                    maxVolumeCC = lesion[1]
-                    index_lesion_index = lesion_count
-                if lesion[2] == maxGleason:
-                    if lesion[1] > maxVolumeCC:
-                        maxGleason = lesion[2]
-                        maxVolumeCC = lesion[1]
-                        index_lesion_index = lesion_count
-
-            # make sure the lesion is clinically significant
-            if maxGleason == 7 or (maxGleason >= 6 and maxVolumeCC >= 500):
-                index = {}
-                index['region'] = self.histology['pca'][index_lesion_index][0]
-                index['Gleason'] = maxGleason
-                index['nn'] = \
-                    prostate.nearest_neighbors(index['region'])
-                index['location'] = prostate.anterior_posterior(index['region'])
-                index['zone'] = prostate.zone(index['region'])
-                self.histology['index'] = index
-            else:
+                # check if the lesion is clinically significant
+                # accept the first row if that is significant since clinical
+                # reads of index were entered first
+                if lesion[2] == 7 or (lesion[2] >= 6 and lesion[1] >= 500):
+                    index = {}
+                    index['region'] = lesion[0]
+                    index['Gleason'] = lesion[2]
+                    index['nn'] = prostate.nearest_neighbors(index['region'])
+                    index['location'] = \
+                        prostate.anterior_posterior(index['region'])
+                    index['zone'] = prostate.zone(index['region'])
+                    self.histology['index'] = index
+                    break
+            if not self.histology['index']:
                 print "No clinically-significant PCA lesion"
                 self.histology['index'] = None
         except KeyError:
             print "No PCA lesion"
             self.histology['index'] = None
-
-
-
-
 
     def check_index_match(self):
         """
