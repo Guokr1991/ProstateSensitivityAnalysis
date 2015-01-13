@@ -62,16 +62,39 @@ print "%i/%i (%.2f) were clinically significant lesions" % (ARFIclinsig,
                                                             ARFItotal,
                                                             float(ARFIclinsig) /
                                                             float(ARFItotal))
-print "%i/%i (%.2f) read lesions were posterior" % (ARFIposterior,
+print "\t%i/%i (%.2f) read lesions were posterior" % (ARFIposterior,
                                                     ARFItotal,
                                                     float(ARFIposterior) /
                                                     float(ARFItotal))
 
-print "%i/%i (%.2f) read lesions were anterior" % (ARFIanterior,
+print "\t%i/%i (%.2f) read lesions were anterior" % (ARFIanterior,
                                                    ARFItotal,
                                                    float(ARFIanterior) /
                                                    float(ARFItotal))
-print "\nBENIGN CONFOUNDERS"
-print "=================="
+
+print "\nCLINICALLY-SIGNIFICANT HISTOLOGY LESIONS"
+print "========================================"
+histclinsig = len([j for i in Pclinsigsens for j in i if j[0]])
+histposterior = len([j for i in Pclinsigsens for j in i if j[1] == 'posterior'])
+histanterior = len([j for i in Pclinsigsens for j in i if j[1] == 'anterior'])
+histtotal = len([j for i in Pclinsigsens for j in i])
+print "%i/%i (%.2f) of clinically-significant lesions were detected" % (histclinsig,
+                                                                        histtotal,
+                                                                        float(histclinsig) /
+                                                                        float(histtotal))
+print "\t%i/%i (%.2f) of these lesions were posterior" % (histposterior,
+                                                    histtotal,
+                                                    float(histposterior) /
+                                                    float(histtotal))
+
+print "\t%i/%i (%.2f) of these lesions were anterior" % (histanterior,
+                                                   histtotal,
+                                                   float(histanterior) /
+                                                   float(histtotal))
+
+
+
+print "\nINDEX LESION BENIGN CONFOUNDERS"
+print "==============================="
 print "Atrophy: %s" % Patrophy
 print "BPH: %s" % Pbph
