@@ -22,6 +22,10 @@ ARFI LESIONS
 22/29 (0.76) were clinically significant lesions
 	28/29 (0.97) read lesions were posterior
 	1/29 (0.03) read lesions were anterior
+False ARFI reads:
+	Non-clinically-significant PCA: []
+	Atrophy: []
+	BPH: []
 
 CLINICALLY-SIGNIFICANT HISTOLOGY LESIONS
 ========================================

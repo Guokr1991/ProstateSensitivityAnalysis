@@ -184,19 +184,36 @@ class LesionAnalysis:
         p = Prostate27()
 
         hist_nnset = set()
+        histnonsigset = set()
         self.clin_sig_match = []
 
         # find histology nearest neighbors for all clinically sig lesions
         for i in self.histology['pca']:
             if i[3] == 'ClinSig':
                 hist_nnset.update(p.nearest_neighbors(i[0]))
+            if i[3] == 'NotClinSig':
+                histnonsigset.update(p.nearest_neighbors(i[0]))
 
+        self.false_positive = []
         for lesion_region in self.arfi:
             if 'index' not in lesion_region and 'read' not in lesion_region:
                 if lesion_region in hist_nnset:
                     self.clin_sig_match.append([True, self.arfi[lesion_region]['location']])
                 else:
                     self.clin_sig_match.append([False, self.arfi[lesion_region]['location']])
+                    # check if something else exists in this region, including:
+                    # non-clinically significant PCA, atrophy, BPH
+                    try:
+                        if lesion_region in self.histology['atrophy']:
+                            self.false_posivite.append('atrophy')
+                        elif lesion_region in self.histology['bph']:
+                            self.false_posivite.append('bph')
+                        elif lesion_region in histnonsigset:
+                            self.false_postive.append('pca')
+                        else:
+                            self.false_positive = None
+                    except KeyError:
+                        self.false_positive = None
 
     def check_hist_clin_sig_sensitivity(self):
         """
