@@ -18,6 +18,7 @@ class LesionAnalysis:
             self.check_index_match()
             self.check_benign_match()
             self.check_clin_sig_match()
+            self.check_hist_clin_sig_sensitivity()
 
     def read_arfi(self):
         """
@@ -177,7 +178,7 @@ class LesionAnalysis:
 
     def check_clin_sig_match(self):
         """
-        check for matches b/w ARFI reads and clinically-significant lesions
+        check if ARFI reads are clinically-significant lesions
         """
         from prostate27 import Prostate27
         p = Prostate27()
@@ -189,12 +190,31 @@ class LesionAnalysis:
         for i in self.histology['pca']:
             if i[3] == 'ClinSig':
                 hist_nnset.update(p.nearest_neighbors(i[0]))
+
         for lesion_region in self.arfi:
-            if 'index' not in lesion_region:
+            if 'index' not in lesion_region and 'read' not in lesion_region:
                 if lesion_region in hist_nnset:
-                    self.clin_sig_match.append(True)
+                    self.clin_sig_match.append([True, self.arfi[lesion_region]['location']])
                 else:
-                    self.clin_sig_match.append(False)
+                    self.clin_sig_match.append([False, self.arfi[lesion_region]['location']])
+
+    def check_hist_clin_sig_sensitivity(self):
+        """
+        check if ARFI detected clinically-significant lesions
+        """
+        from prostate27 import Prostate27
+        p = Prostate27()
+
+        self.clin_sig_sensitivity = []
+        for i in self.histology['pca']:
+            if i[3] == 'ClinSig':
+                nnset = p.nearest_neighbors(i[0])
+                for lesion_region in self.arfi:
+                    if 'index' not in lesion_region and 'read' not in lesion_region:
+                        if lesion_region in nnset:
+                            self.clin_sig_sensitivity.append([True, i[4]])
+                        else:
+                            self.clin_sig_sensitivity.append([False, i[4]])
 
     def check_benign_match(self):
         """
