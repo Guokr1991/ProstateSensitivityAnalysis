@@ -43,9 +43,7 @@ for r in reader:
     ios = r[2::]
     lesion_indices = [a for a, b in enumerate(ios) if b != '']
 
-#    arfi_path = '%s/Patient%s/MRI_Images' % (invivo_root, r[0][:2])
-#    test in the first patient directory P56
-    mri_path = '%s/Patient56/MRI_Images/test' % invivo_root
+    mri_path = '%s/Patient%s/MRI_Images' % (invivo_root, r[0])
 # delete legacy files
     old_filename = '%s/MRI_Index_Region.txt' % mri_path
     if os.path.exists(old_filename): 
