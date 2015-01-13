@@ -7,6 +7,7 @@ Patrophy = []
 Pbph = []
 Pmiss = []
 Pclinsig = []
+Pclinsigsens = []
 
 for p in range(56, 107):
     P = LesionAnalysis(p)
@@ -23,6 +24,7 @@ for p in range(56, 107):
         if P.benign_match['bph']:
             Pbph.append(p)
         Pclinsig.append(P.clin_sig_match)
+        Pclinsigsens.append(P.clin_sig_sensitivity)
 
 PexactIOS = []
 PexactGleason = []
