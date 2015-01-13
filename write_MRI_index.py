@@ -42,14 +42,14 @@ for r in reader:
     if os.path.exists(old_filename): 
         os.remove(old_filename) # remove old MRI_Index_Region file
     try:
-        f = open('%s/MRI_Index_Region_test.txt' % mri_path, 'a')
+        f = open('%s/MRI_Index_Lesion.txt' % mri_path, 'a')
         if len(lesion_indices) == 0:
             f.write('None')
         else:
             for les in lesion_indices[::4]:
-                f.write('%s, %s, ,G%s, %smm, %s\n' % (regions27[les/4], ios[les],
+                f.write('%s, %s, G%s, %smm, %s\n' % (regions27[les/4], ios[les],
                                           ios[les+1],ios[les+2],ios[les+3]))
-                print "%s, %s, ,G%s, %smm, %s\n" % (regions27[les/4], ios[les],
+                print "%s, %s, G%s, %smm, %s\n" % (regions27[les/4], ios[les],
                                           ios[les+1],ios[les+2],ios[les+3])
     except IOError:
         print "Cannot create file to save MRI index lesion data"
