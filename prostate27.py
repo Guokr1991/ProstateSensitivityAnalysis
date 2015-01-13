@@ -79,7 +79,7 @@ class Prostate27:
         """
         lesion_region_indices = self.location(lesion_region)
 
-        if lesion_region_indices <= 1:
+        if lesion_region_indices[1] <= 1:
             location = 'anterior'
         else:
             location = 'posterior'
