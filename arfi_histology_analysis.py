@@ -6,8 +6,7 @@ Pnn = []
 Patrophy = []
 Pbph = []
 Pmiss = []
-Pclinsigtotal = []
-Pclinsighit = []
+Pclinsig = []
 
 for p in range(56, 107):
     P = LesionAnalysis(p)
@@ -23,8 +22,7 @@ for p in range(56, 107):
             Patrophy.append(p)
         if P.benign_match['bph']:
             Pbph.append(p)
-        Pclinsigtotal.append(len(P.clin_sig_match))
-        Pclinsighit.append(P.clin_sig_match.count(True))
+        Pclinsig.append(P.clin_sig_match)
 
 PexactIOS = []
 PexactGleason = []
@@ -36,7 +34,7 @@ for p in Pexact:
 print "ARFI:HISTOLOGY ANALYSIS"
 print "======================"
 print "Valid Patients (%i): %s" % (len(Ptotal), Ptotal)
-print "INDEX LESIONS"
+print "\nINDEX LESIONS"
 print "============="
 print "ARFI Sensitivity (Exact) = %i/%i (%.2f)" % (len(Pexact),
                                                    len(Ptotal),
@@ -48,19 +46,30 @@ print "ARFI Sensitivity (NN) = %i/%i (%.2f)" % (len(Pnn),
                                                 float(len(Ptotal)))
 print "Exact ARFI:Histology Matches:"
 for i, x in enumerate(Pexact):
-    print '%s (IOS: %s, Gleason: %s)' % (x, PexactIOS[i], PexactGleason[i])
+    print '\t%s (IOS: %s, Gleason: %s)' % (x, PexactIOS[i], PexactGleason[i])
 print "NN ARFI:Histology Matches: %s" % Pnn
 print "Missed Cases: %s" % Pmiss
 
-print "CLINICALLY-SIGNIFICANT LESIONS"
-print "=============================="
-print "Total: %i/%i (%.2f)" % (sum(Pclinsighit), sum(Pclinsigtotal),
-                               float(sum(Pclinsighit)) /
-                               float(sum(Pclinsigtotal)))
-print "Anterior: "
-print "Posterior: "
+print "\nARFI LESIONS"
+print "============"
+ARFIclinsig = len([j for i in Pclinsig for j in i if j[0]])
+ARFIposterior = len([j for i in Pclinsig for j in i if j[1] == 'posterior'])
+ARFIanterior = len([j for i in Pclinsig for j in i if j[1] == 'anterior'])
+ARFItotal = len([j for i in Pclinsig for j in i])
+print "%i/%i (%.2f) were clinically significant lesions" % (ARFIclinsig,
+                                                            ARFItotal,
+                                                            float(ARFIclinsig) /
+                                                            float(ARFItotal))
+print "%i/%i (%.2f) read lesions were posterior" % (ARFIposterior,
+                                                    ARFItotal,
+                                                    float(ARFIposterior) /
+                                                    float(ARFItotal))
 
-print "BENIGN CONFOUNDERS"
+print "%i/%i (%.2f) read lesions were anterior" % (ARFIanterior,
+                                                   ARFItotal,
+                                                   float(ARFIanterior) /
+                                                   float(ARFItotal))
+print "\nBENIGN CONFOUNDERS"
 print "=================="
 print "Atrophy: %s" % Patrophy
 print "BPH: %s" % Pbph

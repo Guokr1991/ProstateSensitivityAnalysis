@@ -190,11 +190,11 @@ class LesionAnalysis:
             if i[3] == 'ClinSig':
                 hist_nnset.update(p.nearest_neighbors(i[0]))
         for lesion_region in self.arfi:
-            if 'index' not in lesion_region:
+            if 'index' not in lesion_region and 'read' not in lesion_region:
                 if lesion_region in hist_nnset:
-                    self.clin_sig_match.append(True)
+                    self.clin_sig_match.append([True, self.arfi[lesion_region]['location']])
                 else:
-                    self.clin_sig_match.append(False)
+                    self.clin_sig_match.append([False, self.arfi[lesion_region]['location']])
 
     def check_benign_match(self):
         """
