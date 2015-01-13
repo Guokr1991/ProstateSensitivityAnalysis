@@ -17,6 +17,7 @@ class LesionAnalysis:
             self.histology_lesions()
             self.check_index_match()
             self.check_benign_match()
+            self.check_clin_sig_match()
 
     def read_arfi(self):
         """
@@ -173,6 +174,27 @@ class LesionAnalysis:
         except KeyError:
             self.index_match['exact'] = False
             self.index_match['nn'] = False
+
+    def check_clin_sig_match(self):
+        """
+        check for matches b/w ARFI reads and clinically-significant lesions
+        """
+        from prostate27 import Prostate27
+        p = Prostate27()
+
+        hist_nnset = set()
+        self.clin_sig_match = []
+
+        # find histology nearest neighbors for all clinically sig lesions
+        for i in self.histology['pca']:
+            if i[3] == 'ClinSig':
+                hist_nnset.update(p.nearest_neighbors(i[0]))
+        for lesion_region in self.arfi:
+            if 'index' not in lesion_region:
+                if lesion_region in hist_nnset:
+                    self.clin_sig_match.append(True)
+                else:
+                    self.clin_sig_match.append(False)
 
     def check_benign_match(self):
         """
