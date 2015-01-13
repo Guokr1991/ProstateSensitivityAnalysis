@@ -18,7 +18,7 @@ import csv
 
 invivo_root = '/luscinia/ProstateStudy/invivo'
 
-f = open('MR_27_Regions.csv')
+f = open('MR_27_Regions_full.csv')
 reader = csv.reader(f)
 
 regions27 = ['1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '10p',
@@ -31,20 +31,24 @@ next(reader, None)
 for r in reader:
     # leave off P# and Matlab index
     ios = r[2::]
-    index_ind = [a for a, b in enumerate(ios) if b != '0']
+    lesion_indices = [a for a, b in enumerate(ios) if b != '']
 
-    arfi_path = '%s/Patient%s/MRI_Images' % (invivo_root, r[0][:2])
-
+#    arfi_path = '%s/Patient%s/MRI_Images' % (invivo_root, r[0][:2])
+# test in the first patient directory P56
+    mri_path = '%s/Patient56/MRI_Images/test' % invivo_root
+# change created file to test name
     try:
-        f = open('%s/MRI_Index_Region.txt' % arfi_path, 'a')
-        if len(index_ind) == 0:
+        f = open('%s/MRI_Index_Region_test7.txt' % mri_path, 'a')
+        if len(lesion_indices) == 0:
             f.write('None')
         else:
-            for les in index_ind:
-                f.write('%s\n' % regions27[les])
-                print "%s" % regions27[les]
+            for les in lesion_indices[::4]:
+                f.write('%s, %s, ,G%s, %smm, %s\n' % (regions27[les/4], ios[les],
+                                          ios[les+1],ios[les+2],ios[les+3]))
+                print "%s, %s, ,G%s, %smm, %s\n" % (regions27[les/4], ios[les],
+                                          ios[les+1],ios[les+2],ios[les+3])
     except IOError:
         print "Cannot create file to save MRI index lesion data"
     else:
-        print "Successfully wrote Patient%s MRI index lesion data." % r[0][:2]
+        print "Successfully wrote Patient%s MRI index lesion data." % r[0]
         f.close()
