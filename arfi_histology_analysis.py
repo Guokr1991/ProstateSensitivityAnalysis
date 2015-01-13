@@ -57,6 +57,8 @@ print "=============================="
 print "Total: %i/%i (%.2f)" % (sum(Pclinsighit), sum(Pclinsigtotal),
                                float(sum(Pclinsighit)) /
                                float(sum(Pclinsigtotal)))
+print "Anterior: "
+print "Posterior: "
 
 print "BENIGN CONFOUNDERS"
 print "=================="
