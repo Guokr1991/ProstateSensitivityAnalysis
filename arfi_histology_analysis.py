@@ -6,6 +6,8 @@ Pnn = []
 Patrophy = []
 Pbph = []
 Pmiss = []
+Pclinsigtotal = []
+Pclinsighit = []
 
 for p in range(56, 107):
     P = LesionAnalysis(p)
@@ -21,6 +23,8 @@ for p in range(56, 107):
             Patrophy.append(p)
         if P.benign_match['bph']:
             Pbph.append(p)
+        Pclinsigtotal.append(len(P.clin_sig_match))
+        Pclinsighit.append(P.clin_sig_match.count(True))
 
 PexactIOS = []
 PexactGleason = []
@@ -47,6 +51,14 @@ for i, x in enumerate(Pexact):
     print '%s (IOS: %s, Gleason: %s)' % (x, PexactIOS[i], PexactGleason[i])
 print "NN ARFI:Histology Matches: %s" % Pnn
 print "Missed Cases: %s" % Pmiss
+
+print "CLINICALLY-SIGNIFICANT LESIONS"
+print "=============================="
+print "Total: %i/%i (%.2f)" % (sum(Pclinsighit), sum(Pclinsigtotal),
+                               float(sum(Pclinsighit)) /
+                               float(sum(Pclinsigtotal)))
+print "Anterior: "
+print "Posterior: "
 
 print "BENIGN CONFOUNDERS"
 print "=================="
