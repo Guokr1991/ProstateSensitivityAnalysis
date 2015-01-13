@@ -15,6 +15,7 @@ __email__ = "mlp6@duke.edu"
 __date__ = "2014-11-18"
 
 import csv
+import os
 
 invivo_root = '/luscinia/ProstateStudy/invivo'
 
@@ -34,11 +35,14 @@ for r in reader:
     lesion_indices = [a for a, b in enumerate(ios) if b != '']
 
 #    arfi_path = '%s/Patient%s/MRI_Images' % (invivo_root, r[0][:2])
-# test in the first patient directory P56
+#    test in the first patient directory P56
     mri_path = '%s/Patient56/MRI_Images/test' % invivo_root
-# change created file to test name
+# delete legacy files
+    old_filename = '%s/MRI_Index_Region.txt' % mri_path
+    if os.path.exists(old_filename): 
+        os.remove(old_filename) # remove old MRI_Index_Region file
     try:
-        f = open('%s/MRI_Index_Region_test7.txt' % mri_path, 'a')
+        f = open('%s/MRI_Index_Region_test.txt' % mri_path, 'a')
         if len(lesion_indices) == 0:
             f.write('None')
         else:
