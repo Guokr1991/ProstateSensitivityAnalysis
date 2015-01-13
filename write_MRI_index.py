@@ -14,6 +14,15 @@ __author__ = "Mark Palmeri"
 __email__ = "mlp6@duke.edu"
 __date__ = "2014-11-18"
 
+""" Mofidied by Tyler Glass on 1/13/2015 to incorporate full MRI lesion data 
+from the 27 regions spreadsheet including location, IOS, predicted Gleason 
+grade, length (mm) of longest dimension, and extracapsular extension present (Y)
+or not present (N). This is still a one-time-use script. The Notes column of the
+MRI 27 regions spreadsheet downloaded from Google Drive as CSV was put into 
+text files in corresponding patient  directories (P85,P90) and deleted prior 
+to running the script
+"""
+
 import csv
 import os
 
