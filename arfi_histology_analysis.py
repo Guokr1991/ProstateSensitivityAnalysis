@@ -8,6 +8,7 @@ Pbph = []
 Pmiss = []
 Pclinsig = []
 Pclinsigsens = []
+Pfalsepositive = []
 
 for p in range(56, 107):
     P = LesionAnalysis(p)
@@ -25,6 +26,7 @@ for p in range(56, 107):
             Pbph.append(p)
         Pclinsig.append(P.clin_sig_match)
         Pclinsigsens.append(P.clin_sig_sensitivity)
+        Pfalsepositive.append(P.false_positive)
 
 PexactIOS = []
 PexactGleason = []
@@ -71,6 +73,10 @@ print "\t%i/%i (%.2f) read lesions were anterior" % (ARFIanterior,
                                                    ARFItotal,
                                                    float(ARFIanterior) /
                                                    float(ARFItotal))
+print "False ARFI reads:"
+print "\tNon-clinically-significant PCA: %s" % [x for x in Pfalsepositive if x == 'pca']
+print "\tAtrophy: %s" % [x for x in Pfalsepositive if x == 'atrophy']
+print "\tBPH: %s" % [x for x in Pfalsepositive if x == 'bph']
 
 print "\nCLINICALLY-SIGNIFICANT HISTOLOGY LESIONS"
 print "========================================"
