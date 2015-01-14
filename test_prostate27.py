@@ -10,5 +10,11 @@ class runTest(unittest.TestCase):
         self.assertIn('11a', p.nearest_neighbors('15as'))
         self.assertIn('5p', p.nearest_neighbors('11p'))
 
+    def test_location(self):
+        p = Prostate27()
+        self.assertTrue(p.location('12a') == (2, 1, 3))
+        self.assertTrue(p.location('1a') == (0, 1, 1))
+
+
 if __name__ == '__main__':
     unittest.main()
