@@ -138,7 +138,8 @@ class LesionAnalysis:
             print "No PCA lesion"
             self.histology['index'] = None
 
-    def clin_sig(self, volume, gleason):
+    @staticmethod
+    def clin_sig(volume, gleason):
         """
         determine lesion clinical significance
         """
