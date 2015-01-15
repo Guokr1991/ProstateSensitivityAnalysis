@@ -29,7 +29,7 @@ class LesionAnalysis:
             with open(self.arfi_ios, 'r') as f:
                 arfiios = f.readlines()
 
-            if 'None' not in arfiios:
+            if 'None' not in arfiios[0]:
                 for lesion in arfiios:
                     lesion = lesion[:-1]
                     self.arfi[lesion.split(', ')[0]] = lesion.split(', ')[1]
