@@ -26,9 +26,10 @@ class runTest(unittest.TestCase):
         histology / ARFI index match
         """
         P = LesionAnalysis(None)
-        P.histology['index'] = {'region': '5p', 'nn': set()}
+        P.histology['index'] = {'region': '5p', 'nn': []}
         P.arfi['index'] = {'region': '5p'}
-        self.assertTrue(P.check_index_match())
+        P.check_index_match()
+        self.assertTrue(P.index_match)
 
 if __name__ == '__main__':
     unittest.main()
