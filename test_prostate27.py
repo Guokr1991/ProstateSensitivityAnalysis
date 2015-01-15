@@ -32,8 +32,14 @@ class runTest(unittest.TestCase):
         self.assertTrue(p.nn_ranges((0, 0, 0)) ==
                         [[0, 1], [0, 1], [0, 1, 2, 3]])
 
-    # def test_anterior_posterior(self):
-
+    def test_anterior_posterior(self):
+        """
+        anterior / posterior assignment
+        """
+        p = Prostate27()
+        self.assertTrue(p.anterior_posterior('14as') == 'anterior')
+        self.assertTrue(p.anterior_posterior('1p') == 'posterior')
+        self.assertTrue(p.anterior_posterior('5a') == 'anterior')
 
 
 if __name__ == '__main__':
