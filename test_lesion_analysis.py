@@ -55,5 +55,26 @@ class runTest(unittest.TestCase):
         P.valid_dataset()
         self.assertTrue(P.valid)
 
+    def test_arfi_lesion(self):
+        """
+        ARFI lesion file parsing
+        """
+        P = LesionAnalysis(None)
+        P.arfi = {'11p': '3', '5a': '1'}
+        P.arfi_lesions()
+        self.assertTrue(P.arfi['index']['region'] == '11p')
+        self.assertTrue(P.arfi['index']['IOS'] == '3')
+        # these tests depend on Prostate27, but I'll include them too
+        self.assertTrue(P.arfi['index']['location'] == 'posterior')
+        self.assertTrue(P.arfi['index']['zone'] == 'peripheral zone')
+
+    def test_no_arfi_lesion(self):
+        """
+        no ARFI lesions read
+        """
+        P = LesionAnalysis(None)
+        P.arfi = {'read': 'no lesions read'}
+        self.assertNotIn('index', P.arfi)
+
 if __name__ == '__main__':
     unittest.main()
