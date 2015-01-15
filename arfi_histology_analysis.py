@@ -12,7 +12,7 @@ Pfalsepositive = []
 
 for p in range(56, 107):
     P = LesionAnalysis(p)
-    if P.valid_dataset:
+    if P.valid:
         Ptotal.append(p)
         if P.index_match['exact']:
             Pexact.append(p)
