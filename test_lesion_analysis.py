@@ -25,19 +25,9 @@ class runTest(unittest.TestCase):
         """
         histology / ARFI index match
         """
-        P = LesionAnalysis(None)
-        nnset = set(['5p', '11p', '12p'])
-        P.histology['index'] = {'region': '11p', 'nn': nnset}
-
-        P.arfi['index'] = {'region': '5p'}
-        P.check_index_match()
-        self.assertFalse(P.index_match['exact'])
-        self.assertTrue(P.index_match['nn'])
-
-        P.arfi['index'] = {'region': '11p'}
-        P.check_index_match()
-        self.assertTrue(P.index_match['exact'])
-        self.assertTrue(P.index_match['nn'])
+        P11 = LesionAnalysis(11, './testing')
+        self.assertFalse(P11.index_match['exact'])
+        self.assertTrue(P11.index_match['nn'])
 
     def test_valid_dataset(self):
         """
@@ -48,6 +38,7 @@ class runTest(unittest.TestCase):
         P.histology[None] = None
         P.valid_dataset()
         self.assertFalse(P.valid)
+
         P.arfi = {'4p': '3'}
         P.valid_dataset()
         self.assertFalse(P.valid)

@@ -3,9 +3,9 @@ class LesionAnalysis:
     class for the prostate lesion analysis b/w ARFI and histology
     """
 
-    def __init__(self, pnum):
+    def __init__(self, pnum, root='/luscinia/ProstateStudy/invivo'):
         self.pnum = pnum
-        self.root = '/luscinia/ProstateStudy/invivo/Patient%s' % self.pnum
+        self.root = '%s/Patient%s' % (root, self.pnum)
         # self.root = '/home/mlp6/Downloads/invivo/Patient%s' % self.pnum
         self.arfi_ios = '%s/ARFI_Index_Lesion_IOS.txt' % self.root
         self.hist_lesions = '%s/Histology/HistologyLesions.txt' % self.root
