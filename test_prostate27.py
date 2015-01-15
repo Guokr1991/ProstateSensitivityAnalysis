@@ -41,6 +41,16 @@ class runTest(unittest.TestCase):
         self.assertTrue(p.anterior_posterior('1p') == 'posterior')
         self.assertTrue(p.anterior_posterior('5a') == 'anterior')
 
+    def test_zone(self):
+        """
+        peripheral zone / central gland assignment
+        """
+        p = Prostate27()
+        self.assertTrue(p.zone('9a') == 'central gland')
+        self.assertTrue(p.zone('11a') == 'central gland')
+        self.assertTrue(p.zone('4a') == 'peripheral zone')
+        self.assertTrue(p.zone('14as') == 'peripheral zone')
+
 
 if __name__ == '__main__':
     unittest.main()
