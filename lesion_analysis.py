@@ -3,16 +3,16 @@ class LesionAnalysis:
     class for the prostate lesion analysis b/w ARFI and histology
     """
 
-    def __init__(self, pnum):
+    def __init__(self, pnum, root='/luscinia/ProstateStudy/invivo'):
         self.pnum = pnum
-        self.root = '/luscinia/ProstateStudy/invivo/Patient%s' % self.pnum
+        self.root = '%s/Patient%s' % (root, self.pnum)
         # self.root = '/home/mlp6/Downloads/invivo/Patient%s' % self.pnum
         self.arfi_ios = '%s/ARFI_Index_Lesion_IOS.txt' % self.root
         self.hist_lesions = '%s/Histology/HistologyLesions.txt' % self.root
         self.read_arfi()
         self.read_histology()
         self.valid_dataset()
-        if self.valid_dataset:
+        if self.valid:
             self.arfi_lesions()
             self.histology_lesions()
             self.check_index_match()
@@ -29,7 +29,7 @@ class LesionAnalysis:
             with open(self.arfi_ios, 'r') as f:
                 arfiios = f.readlines()
 
-            if 'None' not in arfiios:
+            if 'None' not in arfiios[0]:
                 for lesion in arfiios:
                     lesion = lesion[:-1]
                     self.arfi[lesion.split(', ')[0]] = lesion.split(', ')[1]
@@ -138,7 +138,8 @@ class LesionAnalysis:
             print "No PCA lesion"
             self.histology['index'] = None
 
-    def clin_sig(self, volume, gleason):
+    @staticmethod
+    def clin_sig(volume, gleason):
         """
         determine lesion clinical significance
         """
@@ -257,12 +258,12 @@ class LesionAnalysis:
 
     def valid_dataset(self):
         """
-        check if this is a valid dataset to include in the sensitivity analysis
+        check if valid dataset to include in the sensitivity analysis
         """
         if None in self.arfi or None in self.histology:
-            self.valid_dataset = False
+            self.valid = False
         else:
-            self.valid_dataset = True
+            self.valid = True
 
     def __str__(self):
         """
@@ -270,7 +271,7 @@ class LesionAnalysis:
         """
 
         s = ['================= PATIENT %s =================' % self.pnum]
-        if self.valid_dataset is False:
+        if self.valid is False:
             s.append('Incomplete dataset; not included in analysis.')
         else:
             s.append('Index lesion EXACT match:\t\t%s' %
