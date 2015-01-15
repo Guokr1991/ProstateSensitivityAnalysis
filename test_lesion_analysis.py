@@ -17,9 +17,8 @@ class runTest(unittest.TestCase):
         """
         no histology index lesion
         """
-        P = LesionAnalysis(None)
-        P.histology['index'] = None
-        self.assertFalse(P.check_index_match())
+        P13 = LesionAnalysis(13, './testing')
+        self.assertFalse(P13.check_index_match())
 
     def test_histology_arfi_index_match(self):
         """
@@ -33,39 +32,40 @@ class runTest(unittest.TestCase):
         """
         valid dataset
         """
-        P = LesionAnalysis(None)
-        P.arfi['index'] = None
-        P.histology[None] = None
-        P.valid_dataset()
-        self.assertFalse(P.valid)
+        P13 = LesionAnalysis(13, './testing')
+        self.assertFalse(P13.valid)
 
-        P.arfi = {'4p': '3'}
-        P.valid_dataset()
-        self.assertFalse(P.valid)
-        P.histology = {'region': '11p'}
-        P.valid_dataset()
-        self.assertTrue(P.valid)
+        P11 = LesionAnalysis(11, './testing')
+        self.assertTrue(P11.valid)
 
     def test_arfi_lesion(self):
         """
         ARFI lesion file parsing
         """
-        P = LesionAnalysis(None)
-        P.arfi = {'11p': '3', '5a': '1'}
-        P.arfi_lesions()
-        self.assertTrue(P.arfi['index']['region'] == '11p')
-        self.assertTrue(P.arfi['index']['IOS'] == '3')
+        P11 = LesionAnalysis(11, './testing')
+        self.assertTrue(P11.arfi['index']['region'] == '11p')
+        self.assertTrue(P11.arfi['index']['IOS'] == '3')
         # these tests depend on Prostate27, but I'll include them too
-        self.assertTrue(P.arfi['index']['location'] == 'posterior')
-        self.assertTrue(P.arfi['index']['zone'] == 'peripheral zone')
+        self.assertTrue(P11.arfi['index']['location'] == 'posterior')
+        self.assertTrue(P11.arfi['index']['zone'] == 'peripheral zone')
 
     def test_no_arfi_lesion(self):
         """
         no ARFI lesions read
         """
-        P = LesionAnalysis(None)
-        P.arfi = {'read': 'no lesions read'}
-        self.assertNotIn('index', P.arfi)
+        P10 = LesionAnalysis(10, './testing')
+        self.assertFalse('index' in P10.arfi)
+
+    def test_check_benign_match(self):
+        """
+        ARFI read : benign pathology
+        """
+        P14 = LesionAnalysis(14, './testing')
+        self.assertTrue(P14.benign_match['bph'])
+        self.assertFalse(P14.benign_match['atrophy'])
+        P12 = LesionAnalysis(12, './testing')
+        self.assertFalse(P12.benign_match['bph'])
+        self.assertFalse(P12.benign_match['atrophy'])
 
 if __name__ == '__main__':
     unittest.main()
