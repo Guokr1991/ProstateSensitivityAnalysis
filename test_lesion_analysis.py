@@ -39,6 +39,21 @@ class runTest(unittest.TestCase):
         self.assertTrue(P.index_match['exact'])
         self.assertTrue(P.index_match['nn'])
 
+    def test_valid_dataset(self):
+        """
+        valid dataset
+        """
+        P = LesionAnalysis(None)
+        P.arfi['index'] = None
+        P.histology[None] = None
+        P.valid_dataset()
+        self.assertFalse(P.valid)
+        P.arfi = {'4p': '3'}
+        P.valid_dataset()
+        self.assertFalse(P.valid)
+        P.histology = {'region': '11p'}
+        P.valid_dataset()
+        self.assertTrue(P.valid)
 
 if __name__ == '__main__':
     unittest.main()

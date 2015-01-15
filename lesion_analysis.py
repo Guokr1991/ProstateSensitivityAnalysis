@@ -12,7 +12,7 @@ class LesionAnalysis:
         self.read_arfi()
         self.read_histology()
         self.valid_dataset()
-        if self.valid_dataset:
+        if self.valid:
             self.arfi_lesions()
             self.histology_lesions()
             self.check_index_match()
@@ -258,12 +258,12 @@ class LesionAnalysis:
 
     def valid_dataset(self):
         """
-        check if this is a valid dataset to include in the sensitivity analysis
+        check if valid dataset to include in the sensitivity analysis
         """
         if None in self.arfi or None in self.histology:
-            self.valid_dataset = False
+            self.valid = False
         else:
-            self.valid_dataset = True
+            self.valid = True
 
     def __str__(self):
         """
@@ -271,7 +271,7 @@ class LesionAnalysis:
         """
 
         s = ['================= PATIENT %s =================' % self.pnum]
-        if self.valid_dataset is False:
+        if self.valid is False:
             s.append('Incomplete dataset; not included in analysis.')
         else:
             s.append('Index lesion EXACT match:\t\t%s' %
