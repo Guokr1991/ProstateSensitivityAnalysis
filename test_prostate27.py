@@ -6,13 +6,14 @@ class runTest(unittest.TestCase):
 
     def test_nearest_neighbor(self):
         """
-        nearest neighbors are found
+        nearest neighbors are found for individual or list of regions
         """
         p = Prostate27()
-        self.assertIn('6a', p.nearest_neighbors('5a'))
-        self.assertIn('11a', p.nearest_neighbors('15as'))
-        self.assertIn('6a', p.nearest_neighbors('15as'))
-        self.assertIn('5p', p.nearest_neighbors('11p'))
+        self.assertIn('6a', p.nearest_neighbors(['5a']))
+        self.assertIn('11a', p.nearest_neighbors(['15as']))
+        self.assertIn('6a', p.nearest_neighbors(['15as']))
+        self.assertIn('5p', p.nearest_neighbors(['11p']))
+        self.assertIn('12p', p.nearest_neighbors(['5a', '11p']))
 
     def test_location(self):
         """

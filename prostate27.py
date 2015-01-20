@@ -37,14 +37,17 @@ class Prostate27:
 
     def nearest_neighbors(self, lesion_region):
         """
-        extract the set of nearest neighbors for 27 region prostate
+        extract the set of nearest neighbors for 27 region prostate for a list
+        of input regions
         """
-        lesion_region_indices = self.location(lesion_region)
+        nn = []
+        for r in lesion_region:
+            lesion_region_indices = self.location(r)
 
-        nnranges = self.nn_ranges(lesion_region_indices)
+            nnranges = self.nn_ranges(lesion_region_indices)
 
-        nn = [[[self.regions[i][j][k] for i in nnranges[0]]
-               for j in nnranges[1]] for k in nnranges[2]]
+            nn.append([[[self.regions[i][j][k] for i in nnranges[0]]
+                      for j in nnranges[1]] for k in nnranges[2]])
 
         nnset = set([x for n in nn for m in n for x in m])
 

@@ -239,6 +239,9 @@ class LesionAnalysis:
         check if atrophy or bph is present in the exact or nearest neighbor
         region to an ARFI lesion
         """
+        from prostate27 import Prostate27
+        p = Prostate27()
+
         self.benign_match = {}
         for benign in ['atrophy', 'bph']:
             try:
@@ -246,10 +249,9 @@ class LesionAnalysis:
                     self.benign_match[benign] = False
                 else:
                     benign_regions = self.histology[benign]
-                    if any([x in benign_regions for x in
-                       self.arfi.keys()]) and \
-                       self.histology['index']['region'] not in \
-                       benign_regions:
+                    if (any([x in benign_regions for x in self.arfi.keys()])) \
+                        and (self.histology['index']['region'] not in
+                             benign_regions):
                         self.benign_match[benign] = True
                     else:
                         self.benign_match[benign] = False
