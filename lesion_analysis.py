@@ -69,20 +69,20 @@ class LesionAnalysis:
 
     def arfi_lesions(self):
         """
-        characterize all ARFI lesions and define ARFI index lesion dict based on
-        highest IOS
+        characterize all ARFI lesions and define ARFI index lesion dict based
+        on highest IOS
         """
         if self.arfi.values()[0] != 'no lesions read':
             try:
                 from prostate27 import Prostate27
-                prostate = Prostate27()
+                p = Prostate27()
 
                 index = {}
                 index['IOS'] = max(self.arfi.values())
                 index['region'] = [x for x, y in self.arfi.items() if
                                    y == index['IOS']][0]
-                index['location'] = prostate.anterior_posterior(index['region'])
-                index['zone'] = prostate.zone(index['region'])
+                index['location'] = p.anterior_posterior([index['region']])
+                index['zone'] = p.zone(index['region'])
                 self.arfi['index'] = index
             except ValueError:
                 self.arfi['index'] = None
@@ -92,8 +92,8 @@ class LesionAnalysis:
                 if 'index' not in lesion:
                     self.arfi[lesion] = {'IOS': self.arfi["%s" % lesion],
                                          'location':
-                                         prostate.anterior_posterior(lesion),
-                                         'zone': prostate.zone(lesion)}
+                                         p.anterior_posterior([lesion]),
+                                         'zone': p.zone(lesion)}
 
     def histology_lesions(self):
         """
@@ -118,9 +118,9 @@ class LesionAnalysis:
                     index = {}
                     index['region'] = lesion[0]
                     index['Gleason'] = lesion[2]
-                    index['nn'] = p.nearest_neighbors(index['region'])
+                    index['nn'] = p.nearest_neighbors([index['region']])
                     index['location'] = \
-                        p.anterior_posterior(index['region'])
+                        p.anterior_posterior([index['region']])
                     index['zone'] = p.zone(index['region'])
                     self.histology['index'] = index
                     break
@@ -132,7 +132,7 @@ class LesionAnalysis:
                     self.histology['pca'][lcnt].append('ClinSig')
                 else:
                     self.histology['pca'][lcnt].append('NotClinSig')
-                self.histology['pca'][lcnt].append(p.anterior_posterior(les[0]))
+                self.histology['pca'][lcnt].append(p.anterior_posterior([les[0]]))
                 self.histology['pca'][lcnt].append(p.zone(les[0]))
         except KeyError:
             print "No PCA lesion"
@@ -191,9 +191,9 @@ class LesionAnalysis:
         # find histology nearest neighbors for all clinically sig lesions
         for i in self.histology['pca']:
             if i[3] == 'ClinSig':
-                hist_nnset.update(p.nearest_neighbors(i[0]))
+                hist_nnset.update(p.nearest_neighbors([i[0]]))
             if i[3] == 'NotClinSig':
-                histnonsigset.update(p.nearest_neighbors(i[0]))
+                histnonsigset.update(p.nearest_neighbors([i[0]]))
 
         self.false_positive = []
         for lesion_region in self.arfi:
@@ -226,7 +226,7 @@ class LesionAnalysis:
         self.clin_sig_sensitivity = []
         for i in self.histology['pca']:
             if i[3] == 'ClinSig':
-                nnset = p.nearest_neighbors(i[0])
+                nnset = p.nearest_neighbors([i[0]])
                 for lesion_region in self.arfi:
                     if 'index' not in lesion_region and 'read' not in lesion_region:
                         if lesion_region in nnset:
