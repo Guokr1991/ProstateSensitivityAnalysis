@@ -65,7 +65,7 @@ class runTest(unittest.TestCase):
         self.assertFalse(P14.benign_match['atrophy'])
         P12 = LesionAnalysis(12, './testing')
         self.assertFalse(P12.benign_match['bph'])
-        self.assertFalse(P12.benign_match['atrophy'])
+        self.assertTrue(P12.benign_match['atrophy'])
 
 if __name__ == '__main__':
     unittest.main()

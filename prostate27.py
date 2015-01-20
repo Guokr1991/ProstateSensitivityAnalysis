@@ -33,6 +33,11 @@ class Prostate27:
                     if c == lesion_region[0]:
                         lesion_region_indices = (i, j, k)
 
+        try:
+            lesion_region_indices
+        except NameError:
+            lesion_region_indices = ()
+
         return lesion_region_indices
 
     def nearest_neighbors(self, lesion_region):
@@ -46,10 +51,13 @@ class Prostate27:
 
             nnranges = self.nn_ranges(lesion_region_indices)
 
-            nn.append([[[self.regions[i][j][k] for i in nnranges[0]] for j in
-                        nnranges[1]] for k in nnranges[2]])
+            if len(nnranges) == 3:
+                nn.append([[[self.regions[i][j][k] for i in nnranges[0]]
+                            for j in nnranges[1]] for k in nnranges[2]])
 
-        nnset = set([y for n in nn for m in n for x in m for y in x])
+                nnset = set([y for n in nn for m in n for x in m for y in x])
+            else:
+                nnset = set([])
 
         return nnset
 
@@ -57,22 +65,26 @@ class Prostate27:
     def nn_ranges(lesion_location):
         """
         calculate index ranges for nearest neighbor region identification
+
+        INPUT: lesion_location (tuple) - (base/apex, lateral, A/P) indices
+        OUTPUT: valid index ranges for nearest neighbor search
         """
         nnranges = [range(x-1, x+2) for x in lesion_location]
 
-        for i in range(3):
-            if min(nnranges[i]) < 0:
-                nnranges[i] = nnranges[i][1:]
-            if i <= 1:
-                if max(nnranges[i]) > 2:
-                    nnranges[i] = nnranges[i][:-1]
-            else:
-                if max(nnranges[i]) > 3:
-                    nnranges[i] = nnranges[i][:-1]
+        if len(nnranges) == 3:
+            for i in range(3):
+                if min(nnranges[i]) < 0:
+                    nnranges[i] = nnranges[i][1:]
+                if i <= 1:
+                    if max(nnranges[i]) > 2:
+                        nnranges[i] = nnranges[i][:-1]
+                else:
+                    if max(nnranges[i]) > 3:
+                        nnranges[i] = nnranges[i][:-1]
 
-        # AS regions, span entire lateral extent
-        if lesion_location[1] == 0:
-            nnranges[2] = range(4)
+            # AS regions, span entire lateral extent
+            if lesion_location[1] == 0:
+                nnranges[2] = range(4)
 
         return nnranges
 

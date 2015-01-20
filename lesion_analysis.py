@@ -249,10 +249,10 @@ class LesionAnalysis:
                     self.benign_match[benign] = False
                 else:
                     benign_regions = self.histology[benign]
-                    benign_regions_nn = p.nearest_neighbors(benign_regions)
-                    if (any([x in benign_regions_nn for x in self.arfi.keys()])) \
+                    arfi_regions_nn = p.nearest_neighbors(self.arfi.keys())
+                    if (any([x in benign_regions for x in arfi_regions_nn])) \
                         and (self.histology['index']['region'] not in
-                             benign_regions_nn):
+                             benign_regions):
                         self.benign_match[benign] = True
                     else:
                         self.benign_match[benign] = False
