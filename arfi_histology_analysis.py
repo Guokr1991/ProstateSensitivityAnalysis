@@ -100,7 +100,7 @@ print "\t%i/%i (%.2f) of these lesions were anterior" % (histanterior,
 
 
 
-print "\nINDEX LESION BENIGN CONFOUNDERS"
-print "==============================="
+print "\nARFI LESION BENIGN CONFOUNDERS"
+print "=============================="
 print "Atrophy: %s" % Patrophy
 print "BPH: %s" % Pbph

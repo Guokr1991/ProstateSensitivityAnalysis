@@ -1,4 +1,4 @@
-ARFI:HISTOLOGY ANALYSIS
+[?1034hARFI:HISTOLOGY ANALYSIS
 ======================
 Valid Patients (29): [56, 58, 59, 60, 62, 63, 64, 70, 71, 72, 73, 76, 78, 79, 82, 83, 84, 86, 87, 89, 91, 92, 93, 94, 95, 96, 99, 102, 104]
 
@@ -33,7 +33,7 @@ CLINICALLY-SIGNIFICANT HISTOLOGY LESIONS
 	30/35 (0.86) of these lesions were posterior
 	5/35 (0.14) of these lesions were anterior
 
-INDEX LESION BENIGN CONFOUNDERS
-===============================
-Atrophy: []
-BPH: [79]
+ARFI LESION BENIGN CONFOUNDERS
+==============================
+Atrophy: [59, 60, 72, 87, 93, 96]
+BPH: [58, 79, 91, 96]
