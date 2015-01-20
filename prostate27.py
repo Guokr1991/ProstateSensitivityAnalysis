@@ -30,7 +30,7 @@ class Prostate27:
         for i, a in enumerate(self.regions):
             for j, b in enumerate(a):
                 for k, c in enumerate(b):
-                    if c == lesion_region:
+                    if c == lesion_region[0]:
                         lesion_region_indices = (i, j, k)
 
         return lesion_region_indices
@@ -42,14 +42,14 @@ class Prostate27:
         """
         nn = []
         for r in lesion_region:
-            lesion_region_indices = self.location(r)
+            lesion_region_indices = self.location([r])
 
             nnranges = self.nn_ranges(lesion_region_indices)
 
-            nn.append([[[self.regions[i][j][k] for i in nnranges[0]]
-                      for j in nnranges[1]] for k in nnranges[2]])
+            nn.append([[[self.regions[i][j][k] for i in nnranges[0]] for j in
+                        nnranges[1]] for k in nnranges[2]])
 
-        nnset = set([x for n in nn for m in n for x in m])
+        nnset = set([y for n in nn for m in n for x in m for y in x])
 
         return nnset
 
