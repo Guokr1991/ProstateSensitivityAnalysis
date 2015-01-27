@@ -13,12 +13,12 @@ class runTest(unittest.TestCase):
 #        self.assertFalse(LesionAnalysis.clin_sig(100, 6))
 #        self.assertTrue(LesionAnalysis.clin_sig(700, 6))
 #
-#    def test_no_index_match(self):
-#        """
-#        no histology index lesion
-#        """
-#        P13 = LesionAnalysis(13, './testing')
-#        self.assertFalse(P13.check_index_match())
+    def test_no_index_match(self):
+        """
+        no histology index lesion
+        """
+        P13 = LesionAnalysis(13, './testing')
+        self.assertFalse(P13.check_index_match())
 #
 #    def test_histology_arfi_index_match(self):
 #        """
