@@ -1,0 +1,18 @@
+{
+	"pca": [
+		{
+			"region": " 12p",
+			"volume_cc": 2521.2,
+			"Gleason": 6,
+			"index": true
+		},
+		{
+			"region": " 4p",
+			"volume_cc": 466.7,
+			"Gleason": 6,
+			"index": false
+		}],
+	"atrophy": {
+		"regions": ["6p", "5p", "9p", "10p"]
+		}
+}
