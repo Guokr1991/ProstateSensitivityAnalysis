@@ -1,13 +1,13 @@
 {
 	"pca": [
 		{
-			"region": " 14as",
+			"region": "14as",
 			"volume_cc": 791.5,
 			"Gleason": 6,
 			"index": true
 		},
 		{
-			"region": " 4p",
+			"region": "4p",
 			"volume_cc": 83.3,
 			"Gleason": 7,
 			"index": false

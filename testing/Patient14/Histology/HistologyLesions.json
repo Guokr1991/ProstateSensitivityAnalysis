@@ -1,7 +1,7 @@
 {
 	"pca": [
 		{
-			"region": " 12p",
+			"region": "12p",
 			"volume_cc": 2233.5,
 			"Gleason": 7,
 			"index": true
