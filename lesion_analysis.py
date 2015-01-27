@@ -6,11 +6,9 @@ class LesionAnalysis:
     def __init__(self, pnum, root='/luscinia/ProstateStudy/invivo'):
         self.pnum = pnum
         self.root = '%s/Patient%s' % (root, self.pnum)
-        # self.root = '/home/mlp6/Downloads/invivo/Patient%s' % self.pnum
-        self.arfi_ios = '%s/ARFI_Index_Lesion_IOS.txt' % self.root
-        self.hist_lesions = '%s/Histology/HistologyLesions.txt' % self.root
-        self.read_arfi()
-        self.read_histology()
+        self.histology = self.read_json('%s/Histology/HistologyLesions.json' %
+                                        root)
+        self.arfi = self.read_json('%s/ARFI_Index_Lesion_IOS.json' % root)
         self.valid_dataset()
         if self.valid:
             self.arfi_lesions()
@@ -39,33 +37,25 @@ class LesionAnalysis:
             # print "%s does not exist" % self.arfi_ios
             self.arfi[None] = None
 
-    def read_histology(self):
+    @staticmethod
+    def read_json(json_input):
         """
-        head histology pca, atrophy and bph lesions
-        """
-        self.histology = {}
-        try:
-            with open(self.hist_lesions, 'r') as f:
-                histread = f.readlines()
+        read JSON file
 
-            for lesion in histread:
-                lesion = lesion[:-1]
-                # make sure we hav)e a properly-formatted histology file
-                if not any([x in lesion for x in ['pca', 'bph', 'atrophy']]):
-                    print "WARNING: Malformed histology lesion file (P%s)." % \
-                        self.pnum
-                # there can be multiple pca lesions
-                if 'pca' in lesion:
-                    if 'pca' not in self.histology:
-                        self.histology['pca'] = [lesion.split(', ')[1:]]
-                    else:
-                        self.histology['pca'].append(lesion.split(', ')[1:])
-                else:
-                    self.histology[lesion.split(', ')[0]] = \
-                        lesion.split(', ')[1:]
+        INPUT: json_input (str) - location of JSON input file
+        OUTPUT: modality_dict - modality dictionary with lesion information
+        """
+        import json
+
+        modality_dict = {}
+        try:
+            with open(json_input, 'r') as f:
+                modality_dict = json.load(f)
         except IOError:
-            # print "%s does not exist" % self.hist_lesions
-            self.histology[None] = None
+            print "%s does not exist" % json_input
+            modality_dict[None] = None
+
+        return modality_dict
 
     def arfi_lesions(self):
         """
