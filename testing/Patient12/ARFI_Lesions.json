@@ -1,0 +1,13 @@
+{
+	"lesions": [
+		{
+			"region": "11p",
+			"IOS": 3,
+			"index": true
+		},		{
+			"region": "5a",
+			"IOS": 1,
+			"index": false
+		}]
+
+}
