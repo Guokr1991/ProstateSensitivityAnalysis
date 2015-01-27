@@ -3,6 +3,8 @@ def main():
 
 def mri_txt_to_json():
     j = open('MRILesions.json', 'w')
+    j.write('{\n')
+    j.write('\t"lesions": [\n')
 
     index = True
     benign = False
@@ -42,6 +44,8 @@ def mri_txt_to_json():
             j.write('\t\t\t"lesion_number":  %1.f,\n'  % lesion_num)
             lesion_num = lesion_num + 1
             j.write('\t\t\t"index": false\n\t\t}')
+            
+    j.write(']\n}')
             
 if __name__ == '__main__':
     main()
