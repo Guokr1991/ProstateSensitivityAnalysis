@@ -12,7 +12,7 @@ class LesionAnalysis:
         self.valid = self.valid_dataset(self.arfi, self.histology)
         if self.valid:
             self.arfi_lesions()
-        #    self.histology_lesions()
+            self.histology_lesions()
         #    self.check_index_match()
         #    self.check_benign_match()
         #    self.check_clin_sig_match()
@@ -40,8 +40,7 @@ class LesionAnalysis:
 
     def arfi_lesions(self):
         """
-        characterize all ARFI lesions and define ARFI index lesion dict based
-        on highest IOS
+        characterize all ARFI lesions and define ARFI index lesion
         """
         if self.arfi.values()[0] != 'no lesions read':
             try:
@@ -78,37 +77,34 @@ class LesionAnalysis:
         p = Prostate27()
 
         try:
-            # find max Gleason score, then max volume with that max Gleason
-            # preference given to first entry in file
+            index = {}
             for lesion in self.histology['pca']:
-                # Gleason scores that weren't reported were recorded as '-1'
-                # these will be set to 6 for now
-                if lesion[2] == '-1':
-                    lesion[2] = '6'
-                # check if the lesion is clinically significant
-                # accept the first row if that is significant since clinical
-                # reads of index were entered first
-                if lesion[2] >= 7 or (lesion[2] >= 6 and lesion[1] >= 500):
-                    index = {}
-                    index['region'] = lesion[0]
-                    index['Gleason'] = lesion[2]
-                    index['nn'] = p.nearest_neighbors([index['region']])
-                    index['location'] = \
-                        p.anterior_posterior([index['region']])
-                    index['zone'] = p.zone(index['region'])
+                if lesion['index'] is True:
+                    index['region'] = lesion['region']
+                    index['Gleason'] = lesion['Gleason']
+                    index['nn'] = p.nearest_neighbors([lesion['region']])
+                    index['location'] = p.anterior_posterior(
+                        [lesion['region']])
+                    index['zone'] = p.zone(lesion['region'])
                     self.histology['index'] = index
                     break
+
             if not self.histology['index']:
                 print "No clinically-significant PCA lesion"
                 self.histology['index'] = None
-            for lcnt, les in enumerate(self.histology['pca']):
-                if self.clin_sig(les[1], les[2]):
-                    self.histology['pca'][lcnt].append('ClinSig')
+
+            for n, les in enumerate(self.histology['pca']):
+                if self.clin_sig(les['volume_cc'], les['Gleason']):
+                    self.histology['pca'][n].update(
+                        {'Clinically Significant': True})
                 else:
-                    self.histology['pca'][lcnt].append('NotClinSig')
-                self.histology['pca'][lcnt].append(p.anterior_posterior([les[0]]))
-                self.histology['pca'][lcnt].append(p.zone(les[0]))
-        except KeyError:
+                    self.histology['pca'][n].update(
+                        {'Clinically Significant': False})
+                    self.histology['pca'][n].update(
+                        {'location': p.anterior_posterior([les['region']])})
+                    self.histology['pca'][n].update(
+                        {'zone': p.zone(les['region'])})
+        except ValueError:
             print "No PCA lesion"
             self.histology['index'] = None
 
