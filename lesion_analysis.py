@@ -64,8 +64,10 @@ class LesionAnalysis:
             # specify location and zone for each lesion
             for n, lesion in enumerate(self.arfi['lesions']):
                 self.arfi['lesions'][n].update({'location':
-                                                p.anterior_posterior([lesion['region']]),
-                                                'zone': p.zone(lesion['region'])})
+                                                p.anterior_posterior(
+                                                    [lesion['region']]),
+                                                'zone': p.zone(
+                                                    lesion['region'])})
 
     def histology_lesions(self):
         """
