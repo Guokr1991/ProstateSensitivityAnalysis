@@ -1,0 +1,28 @@
+{
+	"lesions": [
+		{
+			"region": "9p",
+			"IOS": 3,
+			"Gleason":  7,
+			"diameter_mm": 8,
+			"extracap": false,
+			"lesion_number":  1,
+			"index": true
+		}		{
+			"region": "1a",
+			"IOS": 1,
+			"Gleason":  6,
+			"diameter_mm": 8,
+			"extracap": false,
+			"lesion_number":  2,
+			"index": false
+		}		{
+			"region": "7a",
+			"IOS": 1,
+			"Gleason":  6,
+			"diameter_mm": 15,
+			"extracap": false,
+			"lesion_number":  3,
+			"index": false
+		}]
+}
