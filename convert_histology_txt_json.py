@@ -1,5 +1,5 @@
 def main():
-    pass
+    hist_txt_to_json()
 
 def hist_txt_to_json():
     j = open('HistologyLesions.json', 'w')
