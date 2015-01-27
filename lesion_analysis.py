@@ -7,16 +7,16 @@ class LesionAnalysis:
         self.pnum = pnum
         self.root = '%s/Patient%s' % (root, self.pnum)
         self.histology = self.read_json('%s/Histology/HistologyLesions.json' %
-                                        root)
-        self.arfi = self.read_json('%s/ARFI_Index_Lesion_IOS.json' % root)
-        self.valid_dataset()
-        if self.valid:
-            self.arfi_lesions()
-            self.histology_lesions()
-            self.check_index_match()
-            self.check_benign_match()
-            self.check_clin_sig_match()
-            self.check_hist_clin_sig_sensitivity()
+                                        self.root)
+        self.arfi = self.read_json('%s/ARFI_Lesions.json' % self.root)
+        self.valid = self.valid_dataset(self.arfi, self.histology)
+        #if self.valid:
+        #    self.arfi_lesions()
+        #    self.histology_lesions()
+        #    self.check_index_match()
+        #    self.check_benign_match()
+        #    self.check_clin_sig_match()
+        #    self.check_hist_clin_sig_sensitivity()
 
     @staticmethod
     def read_json(json_input):
@@ -230,14 +230,19 @@ class LesionAnalysis:
             except KeyError:
                 self.benign_match[benign] = False
 
-    def valid_dataset(self):
+    @staticmethod
+    def valid_dataset(modality, histology):
         """
         check if valid dataset to include in the sensitivity analysis
+
+        INPUT: modality (dict)
+               histology (dict)
+        OUTPUT: True/False
         """
-        if None in self.arfi or None in self.histology:
-            self.valid = False
+        if None in modality or None in histology:
+            return False
         else:
-            self.valid = True
+            return True
 
     def __str__(self):
         """
