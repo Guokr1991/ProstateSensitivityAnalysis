@@ -10,8 +10,8 @@ class LesionAnalysis:
                                         self.root)
         self.arfi = self.read_json('%s/ARFI_Lesions.json' % self.root)
         self.valid = self.valid_dataset(self.arfi, self.histology)
-        #if self.valid:
-        #    self.arfi_lesions()
+        if self.valid:
+            self.arfi_lesions()
         #    self.histology_lesions()
         #    self.check_index_match()
         #    self.check_benign_match()
@@ -49,22 +49,23 @@ class LesionAnalysis:
                 p = Prostate27()
 
                 index = {}
-                index['IOS'] = max(self.arfi.values())
-                index['region'] = [x for x, y in self.arfi.items() if
-                                   y == index['IOS']][0]
-                index['location'] = p.anterior_posterior([index['region']])
-                index['zone'] = p.zone(index['region'])
-                self.arfi['index'] = index
+                for lesion in self.arfi['lesions']:
+                    if lesion['index'] is True:
+                        index['IOS'] = lesion['IOS']
+                        index['region'] = lesion['region']
+                        index['location'] = \
+                            p.anterior_posterior([lesion['region']])
+                        index['zone'] = p.zone(lesion['region'])
+                        self.arfi['index'] = index
+                        break
             except ValueError:
                 self.arfi['index'] = None
 
             # specify location and zone for each lesion
-            for lesion in self.arfi:
-                if 'index' not in lesion:
-                    self.arfi[lesion] = {'IOS': self.arfi["%s" % lesion],
-                                         'location':
-                                         p.anterior_posterior([lesion]),
-                                         'zone': p.zone(lesion)}
+            for n, lesion in enumerate(self.arfi['lesions']):
+                self.arfi['lesions'][n].update({'location':
+                                                p.anterior_posterior([lesion['region']]),
+                                                'zone': p.zone(lesion['region'])})
 
     def histology_lesions(self):
         """

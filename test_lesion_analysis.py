@@ -38,16 +38,16 @@ class runTest(unittest.TestCase):
         P11 = LesionAnalysis(11, './testing')
         self.assertTrue(P11.valid)
 
-#    def test_arfi_lesion(self):
-#        """
-#        ARFI lesion file parsing
-#        """
-#        P11 = LesionAnalysis(11, './testing')
-#        self.assertTrue(P11.arfi['index']['region'] == '11p')
-#        self.assertTrue(P11.arfi['index']['IOS'] == '3')
-#        # these tests depend on Prostate27, but I'll include them too
-#        self.assertTrue(P11.arfi['index']['location'] == 'posterior')
-#        self.assertTrue(P11.arfi['index']['zone'] == 'peripheral zone')
+    def test_arfi_lesion(self):
+        """
+        ARFI lesion file parsing
+        """
+        P11 = LesionAnalysis(11, './testing')
+        self.assertTrue(P11.arfi['index']['region'] == '11p')
+        self.assertTrue(P11.arfi['index']['IOS'] == 3)
+        # these tests depend on Prostate27, but I'll include them too
+        self.assertTrue(P11.arfi['index']['location'] == 'posterior')
+        self.assertTrue(P11.arfi['index']['zone'] == 'peripheral zone')
 
     def test_no_arfi_lesion(self):
         """
