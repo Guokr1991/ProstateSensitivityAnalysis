@@ -18,25 +18,6 @@ class LesionAnalysis:
             self.check_clin_sig_match()
             self.check_hist_clin_sig_sensitivity()
 
-    def read_arfi(self):
-        """
-        read ARFI lesion IOS data
-        """
-        self.arfi = {}
-        try:
-            with open(self.arfi_ios, 'r') as f:
-                arfiios = f.readlines()
-
-            if 'None' not in arfiios[0]:
-                for lesion in arfiios:
-                    lesion = lesion[:-1]
-                    self.arfi[lesion.split(', ')[0]] = lesion.split(', ')[1]
-            else:
-                self.arfi['read'] = 'no lesions read'
-        except IOError:
-            # print "%s does not exist" % self.arfi_ios
-            self.arfi[None] = None
-
     @staticmethod
     def read_json(json_input):
         """
