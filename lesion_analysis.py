@@ -15,8 +15,8 @@ class LesionAnalysis:
             self.histology_lesions()
             self.check_index_match()
             self.check_benign_match()
-        #    self.check_clin_sig_match()
-        #    self.check_hist_clin_sig_sensitivity()
+            self.check_clin_sig_match()
+            # self.check_hist_clin_sig_sensitivity()
 
     @staticmethod
     def read_json(json_input):
@@ -160,23 +160,26 @@ class LesionAnalysis:
 
         # find histology nearest neighbors for all clinically sig lesions
         for i in self.histology['pca']:
-            if i[3] == 'ClinSig':
-                hist_nnset.update(p.nearest_neighbors([i[0]]))
-            if i[3] == 'NotClinSig':
-                histnonsigset.update(p.nearest_neighbors([i[0]]))
+            if i['Clinically Significant']:
+                hist_nnset.update(p.nearest_neighbors([i['region']]))
+            else:
+                histnonsigset.update(p.nearest_neighbors([i['region']]))
 
         self.false_positive = []
-        for lesion_region in self.arfi:
-            if 'index' not in lesion_region and 'read' not in lesion_region:
+        try:
+            for lesion in self.arfi['lesions']:
+                lesion_region = lesion['region']
                 if lesion_region in hist_nnset:
-                    self.clin_sig_match.append([True, self.arfi[lesion_region]['location']])
+                    self.clin_sig_match.append(
+                        [True, lesion['location']])
                 else:
-                    self.clin_sig_match.append([False, self.arfi[lesion_region]['location']])
+                    self.clin_sig_match.append(
+                        [False, lesion['location']])
                     # check if something else exists in this region, including:
                     # non-clinically significant PCA, atrophy, BPH
                     try:
                         if lesion_region in self.histology['atrophy']:
-                            self.false_posivite.append('atrophy')
+                                self.false_posivite.append('atrophy')
                         elif lesion_region in self.histology['bph']:
                             self.false_posivite.append('bph')
                         elif lesion_region in histnonsigset:
@@ -185,6 +188,8 @@ class LesionAnalysis:
                             self.false_positive = None
                     except KeyError:
                         self.false_positive = None
+        except KeyError:
+            self.false_positive = None
 
     def check_hist_clin_sig_sensitivity(self):
         """
