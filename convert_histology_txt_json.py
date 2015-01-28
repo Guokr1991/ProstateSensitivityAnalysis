@@ -15,14 +15,14 @@ def hist_txt_to_json():
 
         if 'pca' in td and index:
             j.write('\t"pca": [\n')
-            j.write('\t\t{\n\t\t\t"region": "%s",\n' % td.split(',')[1])
+            j.write('\t\t{\n\t\t\t"region": "%s",\n' % td.split(',')[1][1:])
             j.write('\t\t\t"volume_cc": %.1f,\n' % float(td.split(',')[2]))
             j.write('\t\t\t"Gleason": %i,\n' % float(td.split(',')[3]))
             j.write('\t\t\t"index": true\n\t\t}')
             index = False
         elif 'pca' in td and not index:
             j.write(',\n')
-            j.write('\t\t{\n\t\t\t"region": "%s",\n' % td.split(',')[1])
+            j.write('\t\t{\n\t\t\t"region": "%s",\n' % td.split(',')[1][1:])
             j.write('\t\t\t"volume_cc": %.1f,\n' % float(td.split(',')[2]))
             j.write('\t\t\t"Gleason": %i,\n' % float(td.split(',')[3]))
             j.write('\t\t\t"index": false\n\t\t}')
