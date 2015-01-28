@@ -13,7 +13,7 @@ class LesionAnalysis:
         if self.valid:
             self.arfi_lesions()
             self.histology_lesions()
-        #    self.check_index_match()
+            self.check_index_match()
         #    self.check_benign_match()
         #    self.check_clin_sig_match()
         #    self.check_hist_clin_sig_sensitivity()
