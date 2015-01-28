@@ -14,7 +14,7 @@ class LesionAnalysis:
             self.arfi_lesions()
             self.histology_lesions()
             self.check_index_match()
-        #    self.check_benign_match()
+            self.check_benign_match()
         #    self.check_clin_sig_match()
         #    self.check_hist_clin_sig_sensitivity()
 
@@ -218,8 +218,9 @@ class LesionAnalysis:
                 if self.histology['index'] is None:
                     self.benign_match[benign] = False
                 else:
-                    benign_regions = self.histology[benign]
-                    arfi_regions_nn = p.nearest_neighbors(self.arfi.keys())
+                    benign_regions = self.histology[benign]['regions']
+                    arfi_regions_nn = p.nearest_neighbors(
+                        [x['region'] for x in self.arfi['lesions']])
                     if (any([x in benign_regions for x in arfi_regions_nn])) \
                         and (self.histology['index']['region'] not in
                              benign_regions):

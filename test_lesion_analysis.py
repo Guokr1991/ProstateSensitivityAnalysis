@@ -56,16 +56,16 @@ class runTest(unittest.TestCase):
         P10 = LesionAnalysis(10, './testing')
         self.assertFalse('index' in P10.arfi)
 
-#    def test_check_benign_match(self):
-#        """
-#        ARFI read : benign pathology
-#        """
-#        P14 = LesionAnalysis(14, './testing')
-#        self.assertTrue(P14.benign_match['bph'])
-#        self.assertFalse(P14.benign_match['atrophy'])
-#        P12 = LesionAnalysis(12, './testing')
-#        self.assertFalse(P12.benign_match['bph'])
-#        self.assertTrue(P12.benign_match['atrophy'])
+    def test_check_benign_match(self):
+        """
+        ARFI read : benign pathology
+        """
+        P14 = LesionAnalysis(14, './testing')
+        self.assertTrue(P14.benign_match['bph'])
+        self.assertFalse(P14.benign_match['atrophy'])
+        P12 = LesionAnalysis(12, './testing')
+        self.assertFalse(P12.benign_match['bph'])
+        self.assertTrue(P12.benign_match['atrophy'])
 
 if __name__ == '__main__':
     unittest.main()
