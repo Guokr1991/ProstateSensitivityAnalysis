@@ -1,0 +1,12 @@
+{
+	"lesions": [
+		{
+			"region": "10p",
+			"IOS": 3,
+			"Gleason":  7,
+			"diameter_mm": 22,
+			"extracap": true,
+			"lesion_number":  1,
+			"index": true
+		}]
+}
