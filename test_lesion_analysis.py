@@ -19,15 +19,15 @@ class runTest(unittest.TestCase):
         """
         P13 = LesionAnalysis(13, './testing')
         self.assertFalse(P13.check_index_match())
-#
-#    def test_histology_arfi_index_match(self):
-#        """
-#        histology / ARFI index match
-#        """
-#        P11 = LesionAnalysis(11, './testing')
-#        self.assertFalse(P11.index_match['exact'])
-#        self.assertTrue(P11.index_match['nn'])
-#
+
+    def test_histology_arfi_index_match(self):
+        """
+        histology / ARFI index match
+        """
+        P11 = LesionAnalysis(11, './testing')
+        self.assertFalse(P11.index_match['exact'])
+        self.assertTrue(P11.index_match['nn'])
+
     def test_valid_dataset(self):
         """
         valid dataset
