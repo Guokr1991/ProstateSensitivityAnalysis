@@ -16,7 +16,7 @@ class LesionAnalysis:
             self.check_index_match()
             self.check_benign_match()
             self.check_clin_sig_match()
-            # self.check_hist_clin_sig_sensitivity()
+            self.check_hist_clin_sig_sensitivity()
 
     @staticmethod
     def read_json(json_input):
@@ -199,15 +199,22 @@ class LesionAnalysis:
         p = Prostate27()
 
         self.clin_sig_sensitivity = []
-        for i in self.histology['pca']:
-            if i[3] == 'ClinSig':
-                nnset = p.nearest_neighbors([i[0]])
-                for lesion_region in self.arfi:
-                    if 'index' not in lesion_region and 'read' not in lesion_region:
-                        if lesion_region in nnset:
-                            self.clin_sig_sensitivity.append([True, i[4]])
-                        else:
-                            self.clin_sig_sensitivity.append([False, i[4]])
+        try:
+            for lesion in self.histology['pca']:
+                if lesion['Clinically Significant']:
+                    nnset = p.nearest_neighbors([lesion['region']])
+                    for arfi in self.arfi['lesions']:
+                        lesion_region = arfi['region']
+                        if ('index' not in lesion_region) and \
+                           ('read' not in lesion_region):
+                            if lesion_region in nnset:
+                                self.clin_sig_sensitivity.append(
+                                    [True, lesion['Gleason']])
+                            else:
+                                self.clin_sig_sensitivity.append(
+                                    [False, lesion['Gleason']])
+        except KeyError:
+            self.clin_sig_sensitivity = None
 
     def check_benign_match(self):
         """
