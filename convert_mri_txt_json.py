@@ -12,11 +12,10 @@ def mri_txt_to_json():
     with open('MRI_Index_Lesion.txt', 'r') as t:
         tfile = t.readlines()
 
-    for td in tfile:
+    for n, td in tfile:
         td = td[:-1]
 
         if index:
-            #j.write('\t"pca": [\n')
             j.write('\t\t{\n\t\t\t"region": "%s",\n' % td.split(',')[0])
             j.write('\t\t\t"IOS": %1.f,\n'     % float(td.split(',')[1]))
             j.write('\t\t\t"Gleason":  %1.f,\n'  %     float(td.split(',')[2][-1]))
@@ -30,6 +29,11 @@ def mri_txt_to_json():
             j.write('\t\t\t"lesion_number":  %1.f,\n'  % 1)
             j.write('\t\t\t"index": true\n\t\t}')
             index = False
+
+	    if n < (len(tfile -1): # space with comma for next lesion or close with ] if only lesion
+		jwrite(',')
+            else:
+                j.write(']\n')
             
         else:
             j.write('\t\t{\n\t\t\t"region": "%s",\n' % td.split(',')[0])
@@ -44,8 +48,13 @@ def mri_txt_to_json():
             j.write('\t\t\t"lesion_number":  %1.f,\n'  % lesion_num)
             lesion_num = lesion_num + 1
             j.write('\t\t\t"index": false\n\t\t}')
+	
+	    if n < (len(tfile -1):
+		jwrite(',')
+            else:
+                j.write(']\n')
             
-    j.write(']\n}')
+    j.write('\n}')
             
 if __name__ == '__main__':
     main()
