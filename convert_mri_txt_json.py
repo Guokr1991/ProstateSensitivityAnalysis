@@ -11,8 +11,10 @@ def mri_txt_to_json():
     lesion_num = 2
     with open('MRI_Index_Lesion.txt', 'r') as t:
         tfile = t.readlines()
+    
+    n = 0; # define indexing variable
 
-    for n, td in tfile:
+    for td in tfile:
         td = td[:-1]
 
         if index:
@@ -30,10 +32,11 @@ def mri_txt_to_json():
             j.write('\t\t\t"index": true\n\t\t}')
             index = False
 
-	    if n < (len(tfile -1): # space with comma for next lesion or close with ] if only lesion
-		jwrite(',')
+            if n < (len(tfile) -1): # space with comma for next lesion or close with ] if only lesion
+                j.write(',')
             else:
                 j.write(']\n')
+            n = n+1
             
         else:
             j.write('\t\t{\n\t\t\t"region": "%s",\n' % td.split(',')[0])
@@ -49,10 +52,11 @@ def mri_txt_to_json():
             lesion_num = lesion_num + 1
             j.write('\t\t\t"index": false\n\t\t}')
 	
-	    if n < (len(tfile -1):
-		jwrite(',')
+            if n < (len(tfile) -1):
+                j.write(',')
             else:
                 j.write(']\n')
+            n = n+1
             
     j.write('\n}')
             
