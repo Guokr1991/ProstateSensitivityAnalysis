@@ -40,6 +40,9 @@ def hist_txt_to_json():
                 else:
                     j.write('"%s"]\n\t\t}' % r[1:])
             benign = True
+    
+    if not benign: # end pca vector if no benign confounders
+        j.write('],\n')
 
     j.write('\n}')
 
