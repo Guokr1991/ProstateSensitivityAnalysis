@@ -12,6 +12,8 @@ def hist_txt_to_json():
         tfile = t.readlines()
 
     num_lesions = len(tfile)
+    
+    global td # define globally for ece_extent_writer method
 
     for nl, td in enumerate(tfile):
         td = td[:-1]
@@ -21,6 +23,8 @@ def hist_txt_to_json():
             j.write('\t\t{\n\t\t\t"region": "%s",\n' % td.split(',')[1][1:])
             j.write('\t\t\t"volume_cc": %.1f,\n' % float(td.split(',')[2]))
             j.write('\t\t\t"Gleason": %i,\n' % float(td.split(',')[3]))
+            j.write('\t\t\t"Staging": "%s",\n' % td.split(',')[4][1:4])
+            j.write('\t\t\t"ECE_extent": "%s",\n' % ece_extent_writer())
             j.write('\t\t\t"index": true\n\t\t}')
             index = False
             if (nl+1) == num_lesions:
@@ -30,6 +34,8 @@ def hist_txt_to_json():
             j.write('\t\t{\n\t\t\t"region": "%s",\n' % td.split(',')[1][1:])
             j.write('\t\t\t"volume_cc": %.1f,\n' % float(td.split(',')[2]))
             j.write('\t\t\t"Gleason": %i,\n' % float(td.split(',')[3]))
+            j.write('\t\t\t"Staging": "%s",\n' % td.split(',')[4][1:4])
+            j.write('\t\t\t"ECE_extent": "%s",\n' % ece_extent_writer())
             j.write('\t\t\t"index": false\n\t\t}')
             if (nl+1) == num_lesions:
                 j.write(']\n')
@@ -48,6 +54,16 @@ def hist_txt_to_json():
             benign = True
 
     j.write('\n}')
+
+def ece_extent_writer():
+    if td.split(',')[4][-1] == 'E':
+        return "Established"
+    elif td.split(',')[4][-1] == 'F':
+        return "Focal"
+    else:
+        return "None"
+        
+
 
 if __name__ == '__main__':
     main()
