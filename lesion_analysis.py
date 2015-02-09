@@ -179,7 +179,7 @@ class LesionAnalysis:
                     # non-clinically significant PCA, atrophy, BPH
                     try:
                         if lesion_region in self.histology['atrophy']:
-                                self.false_posivite.append('atrophy')
+                            self.false_posivite.append('atrophy')
                         elif lesion_region in self.histology['bph']:
                             self.false_posivite.append('bph')
                         elif lesion_region in histnonsigset:
@@ -209,10 +209,12 @@ class LesionAnalysis:
                            ('read' not in lesion_region):
                             if lesion_region in nnset:
                                 self.clin_sig_sensitivity.append(
-                                    [True, lesion['Gleason']])
+                                    [True,
+                                     p.anterior_posterior([lesion['region']])])
                             else:
                                 self.clin_sig_sensitivity.append(
-                                    [False, lesion['Gleason']])
+                                    [False,
+                                     p.anterior_posterior([lesion['region']])])
         except KeyError:
             self.clin_sig_sensitivity = None
 
