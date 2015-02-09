@@ -54,3 +54,6 @@ docs/_build/
 target/
 
 *.swp
+
+.ipynb_checkpoints
+
