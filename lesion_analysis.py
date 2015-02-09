@@ -189,6 +189,7 @@ class LesionAnalysis:
                     except KeyError:
                         self.false_positive = None
         except KeyError:
+            self.clin_sig_match = None
             self.false_positive = None
 
     def check_hist_clin_sig_sensitivity(self):
