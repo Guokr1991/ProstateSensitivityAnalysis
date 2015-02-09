@@ -62,8 +62,6 @@ def ece_extent_writer():
         return "Focal"
     else:
         return "None"
-        
-
 
 if __name__ == '__main__':
     main()
