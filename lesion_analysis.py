@@ -33,7 +33,7 @@ class LesionAnalysis:
             with open(json_input, 'r') as f:
                 modality_dict = json.load(f)
         except IOError:
-            print "%s does not exist" % json_input
+            # print "%s does not exist" % json_input
             modality_dict[None] = None
 
         return modality_dict
