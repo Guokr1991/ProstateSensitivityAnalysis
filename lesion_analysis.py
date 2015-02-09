@@ -185,7 +185,7 @@ class LesionAnalysis:
                         elif lesion_region in histnonsigset:
                             self.false_postive.append('pca')
                         else:
-                            self.false_positive = None
+                            self.false_positive.append('no lesion')
                     except KeyError:
                         self.false_positive = None
         except KeyError:
