@@ -4,12 +4,16 @@
 			"region": "14as",
 			"volume_cc": 791.5,
 			"Gleason": 6,
+			"Staging": "T3a",
+			"ECE_extent": "Established",
 			"index": true
 		},
 		{
 			"region": "4p",
 			"volume_cc": 83.3,
 			"Gleason": 7,
+			"Staging": "T2x",
+			"ECE_extent": "None",
 			"index": false
 		}],
 	"atrophy": {

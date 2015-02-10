@@ -1,4 +1,4 @@
-pca, 14as, 791.5, 6
-pca, 4p, 83.34, 7
+pca, 14as, 791.5, 6, T3a.E
+pca, 4p, 83.34, 7, T2x
 atrophy, 3p, 10a, 4a, 9p, 5a, 11a
 bph, 1a, 7a, 3a, 9a, 5a, 11a
