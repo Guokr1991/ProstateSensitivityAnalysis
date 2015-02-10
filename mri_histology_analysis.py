@@ -31,7 +31,7 @@ for p in range(56, 107):
 PexactIOS = []
 PexactGleason = []
 for p in Pexact:
-    P = MRAnalysis(p)
+    P = MRAnalysis(p) # reruns through MRAnalysis class
     PexactIOS.append(P.mri['index']['IOS'])
     PexactGleason.append(P.histology['index']['Gleason'])
 

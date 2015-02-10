@@ -14,9 +14,8 @@ class MRAnalysis(LesionAnalysis):
         self.root = '%s/Patient%s' % (root, self.pnum)
         self.histology = self.read_json('%s/Histology/HistologyLesions.json' %
                                         self.root)
-        # self.arfi = self.read_json('%s/ARFI_Lesions.json' % self.root) # read in arfi
         self.mri = self.read_json('%s/MRI_Images/MRILesions.json' % self.root) # read in mri
-        self.arfi = self.mri # set equal for mri_histology_analysis scripts
+        self.arfi = self.mri 
         self.valid = self.valid_dataset(self.mri, self.histology)
         
         if self.valid:
