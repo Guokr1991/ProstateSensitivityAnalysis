@@ -57,9 +57,7 @@ class MRAnalysis(LesionAnalysis):
                                                     [lesion['region']]),
                                                 'zone': p.zone(
                                                     lesion['region'])})
-
-    
-    
+ 
     def __str__(self):
         """
         print analysis results

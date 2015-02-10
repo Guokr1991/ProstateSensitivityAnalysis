@@ -191,7 +191,7 @@ class LesionAnalysis:
                         elif lesion_region in self.histology['bph']['regions']:
                             self.false_positive.append('bph')
                         elif lesion_region in histnonsigset:
-                            self.false_postive.append('pca')
+                            self.false_positive.append('pca')
                         else:
                             self.false_positive = None
                     except KeyError:
