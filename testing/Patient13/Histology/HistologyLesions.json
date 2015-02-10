@@ -6,7 +6,7 @@
 			"Gleason": 4,
 			"Staging": "T2x",
 			"ECE_extent": "None",
-			"index": true
+			"index": false
 		}]
 
 }
