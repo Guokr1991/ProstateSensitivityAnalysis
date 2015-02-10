@@ -4,6 +4,8 @@
 			"region": "4a",
 			"volume_cc": 100.0,
 			"Gleason": 4,
+			"Staging": "T2x",
+			"ECE_extent": "None",
 			"index": true
 		}]
 

@@ -4,6 +4,8 @@
 			"region": "12p",
 			"volume_cc": 2233.5,
 			"Gleason": 7,
+			"Staging": "T3a",
+			"ECE_extent": "Focal",
 			"index": true
 		}],
 	"bph": {
