@@ -51,10 +51,15 @@ class MRAnalysis(LesionAnalysis):
             except ValueError:
                 self.mri['index'] = None
 
-            # specify location and zone for each lesion
-            #for n, lesion in enumerate(self.mri['lesions']):
-            #    self.mri['lesions'][n].update({'location': p.anterior_posterior([lesion['region']]),
-             #                                   'zone': p.zone(lesion['region'])})                                     'zone': prostate.zone(lesion)}
+            for n, lesion in enumerate(self.mri['lesions']):
+                self.mri['lesions'][n].update({'location':
+                                                p.anterior_posterior(
+                                                    [lesion['region']]),
+                                                'zone': p.zone(
+                                                    lesion['region'])})
+
+    
+    
     def __str__(self):
         """
         print analysis results
