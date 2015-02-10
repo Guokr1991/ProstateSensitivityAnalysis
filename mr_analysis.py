@@ -41,8 +41,7 @@ class MRAnalysis(LesionAnalysis):
                     if lesion['index'] is True:
                         index['IOS'] = lesion['IOS']
                         index['region'] = lesion['region']
-                        index['location'] = \
-                            p.anterior_posterior([lesion['region']])
+                        index['location'] = p.anterior_posterior([lesion['region']])
                         index['zone'] = p.zone(lesion['region'])
                         index['Gleason'] = lesion['Gleason']
                         index['diameter_mm'] = lesion['diameter_mm']

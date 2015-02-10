@@ -82,9 +82,11 @@ class LesionAnalysis:
                 if lesion['index'] is True:
                     index['region'] = lesion['region']
                     index['Gleason'] = lesion['Gleason']
+                    index['volume'] = lesion['volume_cc']
                     index['nn'] = p.nearest_neighbors([lesion['region']])
-                    index['location'] = p.anterior_posterior(
-                        [lesion['region']])
+                    index['location'] = p.anterior_posterior([lesion['region']])
+                    index['Staging'] = lesion['Staging']
+                    index['ECE_extent']=lesion['ECE_extent']
                     index['zone'] = p.zone(lesion['region'])
                     self.histology['index'] = index
                     break
@@ -102,6 +104,7 @@ class LesionAnalysis:
                         {'location': p.anterior_posterior([les['region']])})
                     self.histology['pca'][n].update(
                         {'zone': p.zone(les['region'])})
+                    
                                      
         except ValueError:
             print "No PCA lesion"
