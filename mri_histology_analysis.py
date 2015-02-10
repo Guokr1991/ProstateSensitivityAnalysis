@@ -35,7 +35,7 @@ for p in Pexact:
     PexactIOS.append(P.mri['index']['IOS'])
     PexactGleason.append(P.histology['index']['Gleason'])
 
-print "MRI:HISTOLOGY ANALYSIS"
+print "\n\nMRI:HISTOLOGY ANALYSIS"
 print "======================"
 print "Valid Patients (%i): %s" % (len(Ptotal), Ptotal)
 print "\nINDEX LESIONS"

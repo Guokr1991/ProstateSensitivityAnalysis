@@ -108,9 +108,9 @@ class LesionAnalysis:
             self.histology['index'] = None
         
         if 'index' in self.histology:
-            print "Histology Index Exists"
+            print "Histology Index Exists, P%i" % self.pnum
         else:
-            print "No Histology Index Lesion"
+            print "No Histology Index Lesion, P%i" % self.pnum
             self.histology['index']=None
 
     @staticmethod
