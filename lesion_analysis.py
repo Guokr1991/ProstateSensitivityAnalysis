@@ -88,11 +88,9 @@ class LesionAnalysis:
                     index['zone'] = p.zone(lesion['region'])
                     self.histology['index'] = index
                     break
-
-            if not self.histology['index']:
-                print "No clinically-significant PCA lesion"
-                self.histology['index'] = None
-
+            
+            
+            
             for n, les in enumerate(self.histology['pca']):
                 if self.clin_sig(les['volume_cc'], les['Gleason']):
                     self.histology['pca'][n].update(
@@ -104,9 +102,16 @@ class LesionAnalysis:
                         {'location': p.anterior_posterior([les['region']])})
                     self.histology['pca'][n].update(
                         {'zone': p.zone(les['region'])})
+                                     
         except ValueError:
             print "No PCA lesion"
             self.histology['index'] = None
+        
+        if 'index' in self.histology:
+            print "Histology Index Exists"
+        else:
+            print "No Histology Index Lesion"
+            self.histology['index']=None
 
     @staticmethod
     def clin_sig(volume, gleason):
