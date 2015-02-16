@@ -4,6 +4,8 @@
 			"region": "4p",
 			"volume_cc": 466.7,
 			"Gleason": 5,
+			"Staging": "T2x",
+			"ECE_extent": "None",
 			"index": true
 		}],
 	"atrophy": {
