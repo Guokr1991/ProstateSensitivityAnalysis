@@ -25,6 +25,7 @@ class MRAnalysis(LesionAnalysis):
             self.check_benign_match()
             self.check_clin_sig_match()
             self.check_hist_clin_sig_sensitivity()
+            self.check_ece_match()
                                  
     def mri_lesions(self):
         """
@@ -57,6 +58,60 @@ class MRAnalysis(LesionAnalysis):
                                                     [lesion['region']]),
                                                 'zone': p.zone(
                                                     lesion['region'])})
+
+    def check_ece_match(self):
+        """
+        check for a focal and established ECE match b/w MRI and histology index lesions
+        """
+        self.ece_match = {}        
+        self.ece_match['index'] = {}
+        self.ece_match['patient'] = {}
+                
+        if self.index_match['nn']==True:
+                
+                if self.histology['index']['ECE_extent']=='None' and self.mri['index']['ECE']==False:
+                       self.ece_match['index']['Established']=False
+                       self.ece_match['index']['Focal']=False                       
+                       self.ece_match['index']['True_Negative']=True
+                       self.ece_match['index']['False_Positive']=False
+                    
+                elif self.histology['index']['ECE_extent']=='None' and \
+                     self.mri['index']['ECE']==True:
+                         self.ece_match['index']['Established']=False
+                         self.ece_match['index']['Focal']=False
+                         self.ece_match['index']['False_Positive']=True
+                         self.ece_match['index']['True_Negative']=False
+
+                elif self.histology['index']['ECE_extent']=='Focal' and \
+                     self.mri['index']['ECE']== False:
+                         self.ece_match['index']['Focal']=False
+                         self.ece_match['index']['Established']=False
+                         self.ece_match['index']['True_Negative']=False
+                         self.ece_match['index']['False_Positive']=False    
+                         
+                elif self.histology['index']['ECE_extent']=='Established' and \
+                     self.mri['index']['ECE']==False:
+                         self.ece_match['index']['Established']=False
+                         self.ece_match['index']['Focal']=False
+                         self.ece_match['index']['True_Negative']=False
+                         self.ece_match['index']['False_Positive']=False 
+                         
+                elif self.histology['index']['ECE_extent']=='Focal' and \
+                     self.mri['index']['ECE']== True:
+                         self.ece_match['index']['Focal']=True
+                         self.ece_match['index']['Established']=False
+                         self.ece_match['index']['True_Negative']=False
+                         self.ece_match['index']['False_Positive']=False   
+                         
+                elif self.histology['index']['ECE_extent']=='Established' and \
+                     self.mri['index']['ECE']==True:
+                         self.ece_match['index']['Established']=True
+                         self.ece_match['index']['Focal']=False   
+                         self.ece_match['index']['True_Negative']=False
+                         self.ece_match['index']['False_Positive']=False        
+#        except KeyError:
+#            self.ece_match['index'] = None
+       
  
     def __str__(self):
         """
