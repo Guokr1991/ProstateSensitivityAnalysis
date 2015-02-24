@@ -27,6 +27,7 @@ class MRAnalysis(LesionAnalysis):
             self.check_hist_clin_sig_sensitivity()
             self.check_ece_index_match()
             self.check_ece_patient_match()
+            self.check_ece_established_match()
                                  
     def mri_lesions(self):
         """
@@ -114,7 +115,7 @@ class MRAnalysis(LesionAnalysis):
         """
         check for any ECE called b/w MRI and histology cases on any lesion
         """
-        self.ece_match['patient'] = {}
+        self.ece_match['patient_match'] = {}
         
         # assign MRI and Hist as False
         Hist_ECE = False     
@@ -133,19 +134,56 @@ class MRAnalysis(LesionAnalysis):
                      Hist_ECE = True
     
             if Hist_ECE == False and MRI_ECE == False:
-                self.ece_match['patient'] = 'True_Negative'
+                self.ece_match['patient_match'] = 'True_Negative'
             
             if Hist_ECE == True and MRI_ECE == False:
-                self.ece_match['patient'] = 'False_Negative'
+                self.ece_match['patient_match'] = 'False_Negative'
             
             if Hist_ECE == False and MRI_ECE == True:
-                self.ece_match['patient'] = 'False_Positive'
+                self.ece_match['patient_match'] = 'False_Positive'
             
             if Hist_ECE == True and MRI_ECE == True:
-                self.ece_match['patient'] = 'True_Positive'
+                self.ece_match['patient_match'] = 'True_Positive'
         
         except ValueError:
-                self.ece_match['patient'] = 'error'
+                self.ece_match['patient_match'] = 'error'
+    
+    def check_ece_established_match(self):
+        """
+        checks if MRI called ECE on any lesions if Established ECE present on Histology
+        """
+        self.ece_match['established_match'] = {}
+        
+        # assign MRI and Hist as False
+        Hist_ECE = False     
+        MRI_ECE =  False
+        try: 
+            
+            for lesion in self.mri['lesions']:
+                
+                if lesion['extracap']== True:
+                    MRI_ECE = True
+                    
+            for pca in self.histology['pca']:
+            
+                if pca['ECE_extent']=='Established':
+                    # Consider only Established ECE for this analysis
+                     Hist_ECE = True
+    
+            if Hist_ECE == False and MRI_ECE == False:
+                self.ece_match['established_match'] = 'True_Negative'
+            
+            if Hist_ECE == True and MRI_ECE == False:
+                self.ece_match['established_match'] = 'False_Negative'
+            
+            if Hist_ECE == False and MRI_ECE == True:
+                self.ece_match['established_match'] = 'False_Positive'
+            
+            if Hist_ECE == True and MRI_ECE == True:
+                self.ece_match['established_match'] = 'True_Positive'
+        
+        except ValueError:
+                self.ece_match['established_match'] = 'error'
         
  
     def __str__(self):
