@@ -194,13 +194,26 @@ class runTest(unittest.TestCase):
         MRI ECE : Histology ECE for if ECE present in entire patient
         """
         P10 = MRAnalysis(10, './testing')
-        self.assertTrue(P10.ece_match['patient']=='True_Positive')
+        self.assertTrue(P10.ece_match['patient_match']=='True_Positive')
         
         P11 = MRAnalysis(11, './testing')
-        self.assertTrue(P11.ece_match['patient']=='False_Negative')
+        self.assertTrue(P11.ece_match['patient_match']=='False_Negative')
         
         P12 = MRAnalysis(12, './testing')
-        self.assertTrue(P12.ece_match['patient']=='False_Positive')
+        self.assertTrue(P12.ece_match['patient_match']=='False_Positive')
+        
+    def test_established_ece_match(self):
+        """
+        MRI ECE : Histology ECE for if ECE present in entire patient
+        """
+        P10 = MRAnalysis(10, './testing')
+        self.assertTrue(P10.ece_match['established_match']=='True_Positive')
+        
+        P11 = MRAnalysis(11, './testing')
+        self.assertTrue(P11.ece_match['established_match']=='False_Negative')
+        
+        P14 = MRAnalysis(14, './testing')
+        self.assertTrue(P14.ece_match['established_match']=='True_Negative')
         
       
         
