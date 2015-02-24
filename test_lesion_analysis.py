@@ -167,24 +167,30 @@ class runTest(unittest.TestCase):
         self.assertTrue(P14.mri['index']['IOS'] == 3)
         self.assertFalse(P14.mri['index']['region'] == '3p')
 
-#    def test_MR_no_index_match(self):
-#        """
-#        no histology index lesion using MRAnalysis class
-#        """
-#        P13 = MRAnalysis(13, './testing')
-#        self.assertFalse(P13.check_index_match())
-#
-#    def test_histology_mri_index_match(self):
-#        """
-#        histology / MRI index match
-#        """
-#        P11 = MRAnalysis(11, './testing')
-#        self.assertFalse(P11.index_match['exact'])
-#        self.assertTrue(P11.index_match['nn'])
-#
-#        P14 = MRAnalysis(14, './testing')
-#        self.assertFalse(P14.index_match['exact'])
-#        self.assertTrue(P14.index_match['nn'])
-  
+    def test_index_ece_match(self):
+        """
+        MRI ECE : Histology ECE for index lesions
+        """
+        P11 = MRAnalysis(11, './testing')
+        self.assertFalse(P11.ece_match['index']['False_Positive'])
+        self.assertFalse(P11.ece_match['index']['Established'])
+        self.assertFalse(P11.ece_match['index']['Focal'])
+        self.assertFalse(P11.ece_match['index']['True_Negative'])
+        
+        P10 = MRAnalysis(10, './testing')
+        self.assertFalse(P10.ece_match['index']['False_Positive'])
+        self.assertTrue(P10.ece_match['index']['Established'])
+        self.assertFalse(P10.ece_match['index']['Focal'])
+        self.assertFalse(P10.ece_match['index']['True_Negative'])
+        
+        P14 = MRAnalysis(14, './testing')
+        self.assertFalse(P14.ece_match['index']['False_Positive'])
+        self.assertFalse(P14.ece_match['index']['Established'])
+        self.assertFalse(P14.ece_match['index']['Focal'])
+        self.assertFalse(P14.ece_match['index']['True_Negative'])
+
+        
+      
+        
 if __name__ == '__main__':
     unittest.main()
