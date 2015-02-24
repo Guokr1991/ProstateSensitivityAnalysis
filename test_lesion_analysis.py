@@ -188,7 +188,19 @@ class runTest(unittest.TestCase):
         self.assertFalse(P14.ece_match['index']['Established'])
         self.assertFalse(P14.ece_match['index']['Focal'])
         self.assertFalse(P14.ece_match['index']['True_Negative'])
-
+    
+    def test_patient_ece_match(self):
+        """
+        MRI ECE : Histology ECE for if ECE present in entire patient
+        """
+        P10 = MRAnalysis(10, './testing')
+        self.assertTrue(P10.ece_match['patient']=='True_Positive')
+        
+        P11 = MRAnalysis(11, './testing')
+        self.assertTrue(P11.ece_match['patient']=='False_Negative')
+        
+        P12 = MRAnalysis(12, './testing')
+        self.assertTrue(P12.ece_match['patient']=='False_Positive')
         
       
         
