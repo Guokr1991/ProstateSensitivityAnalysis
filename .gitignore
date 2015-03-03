@@ -56,4 +56,4 @@ target/
 *.swp
 
 .ipynb_checkpoints
-
+*-eps-converted-to.pdf
