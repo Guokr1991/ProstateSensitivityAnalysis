@@ -185,17 +185,16 @@ class LesionAnalysis:
                         [False, lesion['location']])
                     # check if something else exists in this region, including:
                     # non-clinically significant PCA, atrophy, BPH
-                    try:
+                    if lesion_region in histnonsigset:
+                        self.false_positive.append('pca')
+                    elif self.histology['atrophy']:
                         if lesion_region in self.histology['atrophy']['regions']:
                             self.false_positive.append('atrophy')
-                        elif lesion_region in self.histology['bph']['regions']:
+                    elif self.histology['bph']:
+                        if lesion_region in self.histology['bph']['regions']:
                             self.false_positive.append('bph')
-                        elif lesion_region in histnonsigset:
-                            self.false_positive.append('pca')
-                        else:
-                            self.false_positive.append('no lesion')
-                    except KeyError:
-                        self.false_positive = None
+                    else:
+                        self.false_positive.append('no lesion')
         except KeyError:
             self.clin_sig_match = None
             self.false_positive = None
