@@ -178,11 +178,12 @@ class LesionAnalysis:
             for lesion in self.arfi['lesions']:
                 lesion_region = lesion['region']
                 if lesion_region in hist_nnset:
-                    self.clin_sig_match.append(
-                        [True, lesion['location']])
+                    self.clin_sig_match.append( [True,
+                                                 lesion['location'],
+                                                 lesion['IOS']])
                 else:
                     self.clin_sig_match.append(
-                        [False, lesion['location']])
+                        [False, lesion['location'], lesion['IOS']])
                     # check if something else exists in this region, including:
                     # non-clinically significant PCA, atrophy, BPH
                     if lesion_region in histnonsigset:
