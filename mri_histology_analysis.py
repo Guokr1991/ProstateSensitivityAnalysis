@@ -179,17 +179,17 @@ print "\t%i/%i (%.2f) of ECE index lesions were False Positive for Extracapsular
 print "\t%i/%i (%.2f) of MRI lesions called matched with Established Extracapsular Extent" %  (len(Pece_index_estab),
                                                             positive_ece_index_cases,
                                                             float (len(Pece_index_estab)) / 
-                                                            float (positive_ece_cases))
+                                                            float (positive_ece_index_cases))
 
 print "\t%i/%i (%.2f) of MRI lesions called matched with Focal Extracapsular Extent" %  (len(Pece_index_focal),
                                                             positive_ece_index_cases,
                                                             float (len(Pece_index_focal)) / 
-                                                            float (positive_ece_cases))
+                                                            float (positive_ece_index_cases))
                                                             
 print "\t%i/%i (%.2f) of ECE index lesions did not call Extracapsular extent" %  (len(Pece_index_miss),
                                                             positive_ece_index_cases,
                                                             float (len(Pece_index_miss)) / 
-                                                            float (positive_ece_cases))
+                                                            float (positive_ece_index_cases))
 
 print "\n%i/%i (%.2f) of MRI Patients had any Extracapsular Extent" %  (positive_ece_patient_cases,
                                                                     len(Ptotal),
