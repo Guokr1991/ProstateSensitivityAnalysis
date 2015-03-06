@@ -90,9 +90,9 @@ class LesionAnalysis:
                     index['zone'] = p.zone(lesion['region'])
                     self.histology['index'] = index
                     break
-            
-            
-            
+
+
+
             for n, les in enumerate(self.histology['pca']):
                 if self.clin_sig(les['volume_cc'], les['Gleason']):
                     self.histology['pca'][n].update(
@@ -104,12 +104,12 @@ class LesionAnalysis:
                         {'location': p.anterior_posterior([les['region']])})
                     self.histology['pca'][n].update(
                         {'zone': p.zone(les['region'])})
-                    
-                                     
+
+
         except ValueError:
             print "No PCA lesion"
             self.histology['index'] = None
-        
+
         if 'index' in self.histology:
             pass
         else:
@@ -178,24 +178,24 @@ class LesionAnalysis:
             for lesion in self.arfi['lesions']:
                 lesion_region = lesion['region']
                 if lesion_region in hist_nnset:
-                    self.clin_sig_match.append(
-                        [True, lesion['location']])
+                    self.clin_sig_match.append( [True,
+                                                 lesion['location'],
+                                                 lesion['IOS']])
                 else:
                     self.clin_sig_match.append(
-                        [False, lesion['location']])
+                        [False, lesion['location'], lesion['IOS']])
                     # check if something else exists in this region, including:
                     # non-clinically significant PCA, atrophy, BPH
-                    try:
+                    if lesion_region in histnonsigset:
+                        self.false_positive.append('pca')
+                    elif self.histology['atrophy']:
                         if lesion_region in self.histology['atrophy']['regions']:
                             self.false_positive.append('atrophy')
-                        elif lesion_region in self.histology['bph']['regions']:
+                    elif self.histology['bph']:
+                        if lesion_region in self.histology['bph']['regions']:
                             self.false_positive.append('bph')
-                        elif lesion_region in histnonsigset:
-                            self.false_positive.append('pca')
-                        else:
-                            self.false_positive.append('no lesion')
-                    except KeyError:
-                        self.false_positive = None
+                    else:
+                        self.false_positive.append('no lesion')
         except KeyError:
             self.clin_sig_match = None
             self.false_positive = None
