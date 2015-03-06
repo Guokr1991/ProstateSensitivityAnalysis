@@ -8,7 +8,7 @@
 			"extracap": true,
 			"lesion_number":  1,
 			"index": true
-		}		{
+		},		{
 			"region": "2p",
 			"IOS": 2,
 			"Gleason":  6,
@@ -16,7 +16,7 @@
 			"extracap": false,
 			"lesion_number":  2,
 			"index": false
-		}		{
+		},		{
 			"region": "4p",
 			"IOS": 2,
 			"Gleason":  6,
@@ -24,7 +24,7 @@
 			"extracap": false,
 			"lesion_number":  3,
 			"index": false
-		}		{
+		},		{
 			"region": "10p",
 			"IOS": 1,
 			"Gleason":  6,

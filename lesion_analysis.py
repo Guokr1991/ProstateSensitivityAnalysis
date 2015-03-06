@@ -110,11 +110,11 @@ class LesionAnalysis:
             print "No PCA lesion"
             self.histology['index'] = None
 
-        #if 'index' in self.histology:
-        #    print "Histology Index Exists, P%i" % self.pnum
-        #else:
-        #    print "No Histology Index Lesion, P%i" % self.pnum
-        #    self.histology['index']=None
+        if 'index' in self.histology:
+            pass
+        else:
+            print "No Histology Index Lesion, P%i" % self.pnum
+            self.histology['index']=None
 
     @staticmethod
     def clin_sig(volume, gleason):
